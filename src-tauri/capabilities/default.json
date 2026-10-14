@@ -1,0 +1,1 @@
+{"identifier":"main","description":"Local desktop window and explicit user actions","windows":["main"],"permissions":["core:default","core:window:allow-start-dragging","dialog:default","clipboard-manager:allow-write-text","opener:allow-open-url"]}

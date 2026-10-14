@@ -1,0 +1,46 @@
+{
+  "name": "claudex",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build --bundles app",
+    "build:desktop": "tauri build",
+    "dev:web": "node web/server/index.mjs --dev",
+    "build:web": "tsc -p web/tsconfig.json && vite build --config web/vite.config.mjs",
+    "preview:web": "node web/scripts/service.mjs start",
+    "stop:web": "node web/scripts/service.mjs stop",
+    "test": "node --test web/server/*.test.mjs",
+    "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
+    "test:browser": "node web/scripts/browser-test.mjs",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^2",
+    "@tauri-apps/plugin-opener": "^2",
+    "@tauri-apps/plugin-dialog": "^2",
+    "@tauri-apps/plugin-clipboard-manager": "^2",
+    "express": "^5.1.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.5",
+    "playwright": "^1.55",
+    "typescript": "^5.8",
+    "vite": "^6.3"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ribincao/ClaudeX.git"
+  }
+}

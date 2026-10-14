@@ -1,0 +1,36 @@
+# Dependencies and build output
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+target/
+**/target/
+*.dmg
+*.msi
+*.exe
+*.app/
+*.zip
+*.tar.gz
+# Local runtime data and credentials
+.data/
+web/.data/
+.env
+.env.*
+!.env.example
+*.log
+*.pid
+# Test artifacts and private reference screenshots
+.impeccable/review/
+.impeccable/references/
+playwright-report/
+test-results/
+*.tsbuildinfo
+src-tauri/gen/
+.DS_Store
+# Local editor settings
+.vscode/
+.idea/
+
+# Unused mobile icon exports
+src-tauri/icons/android/
+src-tauri/icons/ios/

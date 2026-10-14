@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "ClaudeX",
+  "version": "0.1.0",
+  "identifier": "io.github.ribincao.claudex",
+  "build": {
+    "beforeDevCommand": "npx vite --config web/vite.config.mjs",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build:web",
+    "frontendDist": "../web/dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "ClaudeX",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 720,
+        "minHeight": 560,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true,
+        "backgroundColor": "#191917"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: claudex: http://claudex.localhost data: blob: https:; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost 'self'; object-src 'none'; frame-src 'none'; base-uri 'self'"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "macOS": {
+      "minimumSystemVersion": "12.0"
+    },
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser"
+      }
+    },
+    "shortDescription": "A calm desktop client for Codex",
+    "category": "DeveloperTool"
+  }
+}
