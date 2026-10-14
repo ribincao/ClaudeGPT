@@ -78,13 +78,13 @@ LICENSE                  MIT
 
 ## Data and access
 
-Desktop history and attachments live in the operating system's application-data directory (`~/Library/Application Support/io.github.ribincao.claudex` on macOS). The preview uses separate, ignored `.data/` state. Prompts and selected context go to OpenAI through Codex during inference.
+Desktop UI preferences, transcript cache, and attachments live in the operating system's application-data directory (`~/Library/Application Support/io.github.ribincao.claudex` on macOS). The preview uses separate, ignored `.data/` state. Prompts and selected context go to OpenAI through Codex during inference.
 
-Chat requests read-only access. Work permits writes inside the chosen workspace; Codex can request additional approval. Grants are scoped to the current turn. Review important changes. Clearing ClaudeX history does not delete Codex's own session logs or uploaded files.
+Chat requests read-only access. Work permits writes inside the chosen workspace; Codex can request additional approval. Grants are scoped to the current turn. Review important changes. Desktop deletion affects the original Codex thread after confirmation; the preview's Clear history only clears its own index.
 
 ## First-version scope
 
-The core workflow is implemented. Custom avatars, pets, voice, PDF/Word ingestion, cloud sync, and external MCP form completion are future features. Unsupported forms can be declined. Other Codex clients' history is not imported automatically.
+The core workflow is implemented. Custom avatars, pets, voice, PDF/Word ingestion, cloud sync, and external MCP form completion are future features. Unsupported forms can be declined. Saved local Codex threads are loaded automatically; regular ChatGPT website conversations and hosted-only history are not available through this local protocol.
 
 Windows has a portable backend and packaging configuration but still needs an actual Windows build and runtime test. [Verification notes](VERIFICATION.md) distinguish tested behavior from intended support.
 
@@ -110,3 +110,9 @@ ClaudeX is independent and unaffiliated with Anthropic or OpenAI. Claude Desktop
 ### Interface controls
 
 Sidebar and Settings navigation use compact 34px rows and 16px icons. On macOS, use Command + plus/minus to zoom the whole interface and Command + 0 to reset. On Windows, use Ctrl instead. Desktop zoom ranges from 50% to 200% and persists across restarts. The web preview uses browser zoom.
+
+### Shared Codex history and sign-in
+
+The desktop app uses the installed Codex app-server and its existing Codex home/configuration. It reads saved local threads through `thread/list`, hydrates legacy and paginated transcripts through `thread/read` and `thread/turns/list`, and resumes the original thread ID. History refreshes on startup, window focus, and every 30 seconds while visible. Rename, archive, restore, and confirmed delete use Codex protocol methods and affect the original Codex thread. Pins and visual preferences remain ClaudeX-specific. Local JSON is a render cache and UI preferences, not a replacement Codex history store.
+
+Settings → Account reuses the existing account or starts Codex's ChatGPT browser sign-in flow. This does not provide regular ChatGPT website conversations, cloud-only tasks, or complete parity with every proprietary desktop integration. Avoid sending turns to the same thread from two clients at once. The developer web preview still has its own conversation index.

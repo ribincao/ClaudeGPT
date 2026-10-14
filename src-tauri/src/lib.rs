@@ -1,4 +1,5 @@
 mod engine;
+mod history;
 mod routes;
 mod store;
 use engine::Engine;
@@ -100,6 +101,7 @@ impl Backend {
                 }
             }
         }
+        history::sync(self).await?;
         self.persist();
         self.broadcast();
         Ok(self.snapshot())

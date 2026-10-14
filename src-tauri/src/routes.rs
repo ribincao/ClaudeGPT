@@ -1,4 +1,4 @@
-use crate::{friendly_error, store, Backend};
+use crate::{friendly_error, history, store, Backend};
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde_json::{json, Value};
 use std::{fs, path::PathBuf, sync::Arc};
@@ -196,6 +196,11 @@ pub async fn request(
             backend.engine.resumed.lock().await.clear();
             backend.refresh().await
         }
+        ("POST", ["history", "refresh"]) => {
+            history::sync(&backend).await?;
+            Ok(backend.snapshot())
+        }
+        ("GET", ["chats", id]) => history::hydrate(&backend, id).await,
         ("POST", ["chats"]) => {
             let workspace = store::directory(
                 body["workspace"]
@@ -212,6 +217,25 @@ pub async fn request(
             Ok(chat)
         }
         ("PATCH", ["chats", id]) => {
+            let chat = backend.chat(id)?;
+            if let Some(thread) = chat["threadId"].as_str() {
+                if let Some(title) = body["title"].as_str().filter(|s| !s.trim().is_empty()) {
+                    backend.engine.call("thread/name/set", json!({"threadId":thread,"name":title.trim().chars().take(120).collect::<String>()})).await?;
+                }
+                if let Some(archived) = body["archived"].as_bool() {
+                    backend
+                        .engine
+                        .call(
+                            if archived {
+                                "thread/archive"
+                            } else {
+                                "thread/unarchive"
+                            },
+                            json!({"threadId":thread}),
+                        )
+                        .await?;
+                }
+            }
             let result = backend.edit_chat(id, |chat| {
                 if let Some(title) = body["title"].as_str() {
                     if !title.trim().is_empty() {
@@ -231,6 +255,12 @@ pub async fn request(
         ("DELETE", ["chats", id]) => {
             if backend.chat(id)?["status"] == "running" {
                 return Err("Stop the response before deleting this conversation.".into());
+            }
+            if let Some(thread) = backend.chat(id)?["threadId"].as_str() {
+                backend
+                    .engine
+                    .call("thread/delete", json!({"threadId":thread}))
+                    .await?;
             }
             backend.state.lock().unwrap()["chats"]
                 .as_array_mut()
@@ -535,7 +565,17 @@ async fn send_message(backend: Arc<Backend>, id: &str, body: Value) -> Result<Va
         if !resumed {
             config["threadId"] = json!(thread);
             config["excludeTurns"] = json!(true);
-            backend.engine.call("thread/resume", config).await?;
+            backend
+                .engine
+                .call(
+                    "thread/resume",
+                    if chat["codexHistory"] == true {
+                        json!({"threadId":thread,"excludeTurns":true})
+                    } else {
+                        config
+                    },
+                )
+                .await?;
             backend.engine.resumed.lock().await.insert(thread.clone());
         }
         thread

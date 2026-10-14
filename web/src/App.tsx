@@ -97,6 +97,17 @@ export default function App() {
     window.addEventListener('keydown', zoom);
     return () => window.removeEventListener('keydown', zoom);
   }, [toast]);
+  useEffect(() => {
+    if (!desktop || !activeId) return;
+    void api(`/chats/${activeId}`).catch(error => toast(`Could not load Codex history: ${error.message}`));
+  }, [activeId, toast]);
+  useEffect(() => {
+    if (!desktop) return;
+    const refresh = () => { if (document.visibilityState === 'visible') void api('/history/refresh', 'POST').then(() => activeId ? api(`/chats/${activeId}`) : undefined).catch(() => {}); };
+    window.addEventListener('focus', refresh);
+    const timer = window.setInterval(refresh, 30000);
+    return () => { window.removeEventListener('focus', refresh); window.clearInterval(timer); };
+  }, [activeId]);
   useEffect(() => { document.title = active ? `${active.title} · ClaudeX` : 'ClaudeX'; }, [active?.title]);
   useEffect(() => {
     if (!accountMenu && !chatMenu) return;
@@ -111,7 +122,11 @@ export default function App() {
     try { await api(`/chats/${id}`, method, body); } catch (e) { toast((e as Error).message); }
     setChatMenu(null);
   }
-  function exportChat(chat: Chat) {
+  async function exportChat(chat: Chat) {
+    if (desktop && chat.threadId) {
+      try { chat = await api<Chat>(`/chats/${chat.id}`); }
+      catch (error) { toast(`Could not export Codex history: ${(error as Error).message}`); return; }
+    }
     const messages = chat.items.filter(i => ['userMessage', 'agentMessage'].includes(i.type)).map(i => `## ${i.type === 'userMessage' ? 'You' : 'ClaudeX'}\n\n${i.text || i.content?.map(c => c.text || '').join('\n') || ''}`).join('\n\n');
     download(`${chat.title.replace(/[^\w\s-]/g, '').slice(0, 50) || 'conversation'}.md`, `# ${chat.title}\n\n${messages}\n`); setChatMenu(null);
   }
@@ -189,7 +204,7 @@ export default function App() {
     {dialog === 'workspace' && <Modal title="Choose workspace" close={closeDialog} className="workspace-modal"><h2>A place to work</h2><p>Choose a folder for your next conversation.</p><div className="workspace-list">{state.workspaces.map(directory => <button key={directory} onClick={() => setWorkspace(directory)}><FolderOpen size={21} /><div><span>{folderName(directory)}</span><small>{directory}</small></div>{directory === workspace && <Check size={18} />}</button>)}</div><div className="workspace-dialog-divider" /><label className="field-label" htmlFor="new-workspace">Or use another folder</label><div className="path-input"><FolderOpen size={17} /><input id="new-workspace" value={workspacePath} onChange={e => setWorkspacePath(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setWorkspace(workspacePath); }} /></div><div className="button-row"><button className="secondary-button" onClick={async () => { try { const result = await api('/workspaces/choose', 'POST'); if (result.path) { setWorkspacePath(result.path); closeDialog(); if (active && active.workspace !== result.path) newChat(); } } catch (e) { toast((e as Error).message); } }}><FolderOpen size={16} />Browse folders</button><button className="primary-button" onClick={() => setWorkspace(workspacePath)}>Use folder</button></div>{active && <p className="dialog-footnote">Changing folders starts a new conversation. This chat stays saved.</p>}</Modal>}
     {dialog === 'skills' && <Modal title="Choose a skill" close={closeDialog} className="search-modal skills-modal"><div className="dialog-search"><Sparkles size={21} /><input aria-label="Search skills" placeholder="Find a skill…" value={query} onChange={e => setQuery(e.target.value)} /></div><p className="skills-description">Your installed Codex skills, ready when you need them.</p><div className="search-results">{skillsBusy ? <div className="empty-inline"><LoaderCircle size={23} className="spinning" /><p>Loading your skills…</p></div> : skillError ? <div className="empty-inline"><AlertCircle size={25} /><p>{skillError}</p><button className="secondary-button" onClick={openSkills}>Try again</button></div> : skills.filter(s => `${s.name} ${s.description}`.toLowerCase().includes(query.toLowerCase())).map(skill => <button key={skill.path} onClick={() => { setSelectedSkill(skill); closeDialog(); }}><Sparkles size={18} /><div><span>{skill.name}</span><small>{skill.shortDescription || skill.description}</small></div><Plus size={16} /></button>)}{!skillsBusy && !skillError && !skills.filter(s => `${s.name} ${s.description}`.toLowerCase().includes(query.toLowerCase())).length && <div className="empty-inline"><p>No matching skills. Try another search.</p></div>}</div></Modal>}
     {dialog === 'rename' && target && <Modal title="Rename conversation" close={closeDialog} className="small-modal"><h2>Rename conversation</h2><input className="full-input" aria-label="Conversation name" value={rename} maxLength={120} onChange={e => setRename(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && rename.trim()) { chatAction(target.id, 'PATCH', { title: rename }); closeDialog(); } }} /><div className="button-row"><button className="secondary-button" onClick={closeDialog}>Cancel</button><button className="primary-button" disabled={!rename.trim()} onClick={() => { chatAction(target.id, 'PATCH', { title: rename }); closeDialog(); }}>Save name</button></div></Modal>}
-    {dialog === 'delete' && target && <Modal title="Delete conversation" close={closeDialog} className="small-modal"><h2>Delete this conversation?</h2><p>“{target.title}” will be removed from ClaudeX. This cannot be undone.</p><div className="button-row"><button className="secondary-button" onClick={closeDialog}>Keep conversation</button><button className="danger-button" disabled={target.status === 'running'} onClick={() => { chatAction(target.id, 'DELETE'); closeDialog(); }}>Delete conversation</button></div>{target.status === 'running' && <p>Stop the response before deleting this conversation.</p>}</Modal>}
+    {dialog === 'delete' && target && <Modal title="Delete conversation" close={closeDialog} className="small-modal"><h2>Delete this conversation?</h2><p>“{target.title}” will be removed from {desktop && target.threadId ? "Codex and ClaudeX" : "ClaudeX"}. This cannot be undone.</p><div className="button-row"><button className="secondary-button" onClick={closeDialog}>Keep conversation</button><button className="danger-button" disabled={target.status === 'running'} onClick={() => { chatAction(target.id, 'DELETE'); closeDialog(); }}>Delete conversation</button></div>{target.status === 'running' && <p>Stop the response before deleting this conversation.</p>}</Modal>}
     {notification && <div className="toast" role="status"><span>{notification}</span><button className="icon-button" aria-label="Dismiss notification" onClick={() => setNotification('')}><X size={15} /></button></div>}
   </div>;
 }

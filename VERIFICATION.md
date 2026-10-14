@@ -17,3 +17,5 @@ Windows has platform-aware executable discovery, paths, dialogs, storage, and pa
 ## Source hygiene
 
 Dependencies, compiled Rust output, frontend bundles, installers, private local state, logs, generated permission schemas, and test/reference screenshots are ignored. The public repository contains source, English documentation, lockfiles, and small app icons. No API keys, account tokens, personal conversation data, or proprietary Claude assets are included.
+
+Shared history correction: a read-only live test verified listing existing local Codex threads and loading a saved transcript. No existing thread was renamed, archived, deleted, or sent an inference request during this test. Unit tests verify matching original thread IDs, avoiding duplicates, timestamp conversion, and preserving active local turns.
