@@ -54,6 +54,21 @@ typography:
   label:
     fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
     fontSize: "13px"
+  body-mobile:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "16px"
+  label-large:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "14px"
+  label-small:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "12px"
+  metadata:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "11px"
+  metadata-compact:
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    fontSize: "10px"
   mono:
     fontFamily: "'SFMono-Regular', Consolas, monospace"
 rounded:
@@ -128,9 +143,11 @@ components:
 
 **Creative North Star: "A quiet personal Codex workspace"**
 
-The shipped interface follows the user-pinned Claude Desktop references: charcoal surfaces, warm white text, understated navigation, generous serif greeting, and plain aligned settings rows. The orange knot is the visual identity anchor. This document records `src/styles.css` and the shipped React components; the reference screenshots establish the world, while the implementation establishes the values.
+The shipped interface follows the user-pinned Claude Desktop references: charcoal surfaces, warm white text, understated navigation, generous serif greeting, and plain aligned settings rows. The orange knot is the visual identity anchor. This document records `web/src/styles.css`, `web/index.html`, and the shared React components under `web/src/`; the reference screenshots establish the world, while the implementation establishes the values.
 
 The conversation receives the largest uninterrupted area. Controls use compact system sans text, while the greeting and default assistant prose use Georgia. Depth comes primarily from neighboring surface tones and fine borders; menus and dialogs add soft shadows. The light theme preserves the same geometry and shifts the materials to warm paper tones.
+
+The review in `.impeccable/review/desktop-style-review.md` records a scoped ship disposition for the shared home and General settings captures: `desktop.png`, `settings-desktop.png`, `mobile.png`, and `settings-mobile.png` in the same review directory. The native drag region, executable settings, and image preview below are recorded from source. Native window rendering and interaction, WebKit behavior, and Windows rendering remain unverified because the Mac was locked.
 
 **Key Characteristics:**
 
@@ -186,7 +203,10 @@ Every `light-*` token is the corresponding role in the light theme. Theme switch
 - **Title:** settings section headings use the title role; small-screen settings headings become 16px. Sidebar branding uses Georgia at 25px.
 - **Body:** controls inherit the root body role; composer text is 17px with 1.55 line height, becoming 16px on mobile. The conversation composer uses 15px.
 - **Transcript:** default assistant prose uses the transcript role. User bubbles use one pixel less than the chosen transcript size and 1.6 line height. Small, medium, and large preferences are 15px, 17px, and 19px. The font preference can replace transcript Georgia with system sans without changing the greeting.
-- **Label:** reusable action buttons use 13px. Navigation uses 14px; settings row labels use 14px with 1.5 line height. Supporting descriptions use 12px with 1.5 line height, and dense metadata uses 10–12px.
+- **Label:** reusable action buttons use the label role. The label-large step serves navigation, suggestions, and settings row labels; settings labels add 1.5 line height. The label-small step serves mode/model controls, field labels, connection status, and supporting settings descriptions; descriptions add 1.5 line height.
+- **Metadata:** the metadata step serves attachment chips, activity detail, search excerpts, and settings footnotes. The metadata-compact step serves account sublabels, model descriptions, usage sublabels, workspace paths, and file toolbar detail. These compact steps support larger labels; they do not replace reading prose or primary actions. Mobile controls use these same steps rather than introducing a second scale.
+- **Mobile body:** the body-mobile step serves the home composer at the 760px breakpoint and the desktop search input. Small-screen settings headings use this size with their existing heading weight.
+- **Isolated footnote:** the conversation composer carries a 9px footnote in source. It is not a reusable typography token or a recommendation for future text; this record does not certify its legibility outside the captured review scope.
 - **Mono:** inline code is 0.81em of its parent; block code is 13px with 1.6 line height. Raw file previews use 11px with 1.7 line height.
 
 ### Named Rules
@@ -196,6 +216,8 @@ Every `light-*` token is the corresponding role in the light theme. Theme switch
 ## Layout
 
 The full-height shell is a flex layout measured in dynamic viewport height. Desktop navigation occupies 260px; the main pane takes the remaining width. Its header is 64px high. The content width is a shared CSS custom property used by the home composition and transcript: 770px by default, 660px narrow, or 960px wide. The direction contract described a 740px composer; the shipped source uses the shared 770px limit, with internal padding reducing the conversation composer’s visible width.
+
+In the native shell, a fixed, full-width 28px drag strip occupies the top edge and the shell adds an equal top inset. The strip has no added decorative fill or label and sits below modal overlays. It is marked as a Tauri drag region and hidden from accessibility; the shared web preview omits it. These dimensions describe the source adaptation, not verified native dragging.
 
 The home composition centers the greeting and composer in the available pane. The greeting precedes the composer with 44px of space; a compact suggestion row follows with 25px of space. Transcript and conversation composer share a centered column. Transcript scrolling is separate from the composer. A desktop files pane occupies 370px and shrinks to 320px below 1200px.
 
@@ -269,6 +291,7 @@ Neutral fields rely on borders, placeholders, and clear focus.
 - **Composer:** unbordered textarea inside the enclosing composer, with accent caret and faint placeholder. It grows to 240px and then scrolls.
 - **Instructions:** resizable surface textarea, 8px corners, 13px text, and 1.7 line height.
 - **Selects:** transparent controls at rest, 7px corners, raised hover surface, and the shared focus outline.
+- **Executable path:** native Account settings reuse the existing path field: surface fill, structural border, 8px corners, 12px padding, and label-small input text. A section heading and muted description precede it; Browse and Save & reconnect reuse secondary buttons and their disabled state. The field uses the shared accent focus outline and stays flexible within settings content.
 
 ### Navigation
 
@@ -281,6 +304,8 @@ Segments use a raised track, 3px inset, compact rounded buttons, and selected-ne
 ### Conversation and File Preview
 
 Assistant prose sits directly on the canvas beside the orange knot. User text sits in a raised asymmetric bubble. Code blocks use raised headers, dark rail interiors, thin borders, and horizontal scrolling. Tables scroll horizontally. File previews reuse Markdown styling or compact mono text; files are a side pane on desktop and a drawer on mobile.
+
+Attachment image inspection reuses the shared modal, close icon, backdrop, and focus trap. Its content has 38px 20px 20px padding and a 90vw maximum width; the image is contained without cropping, up to the container width and 80dvh high. Escape or a backdrop click closes it, and the modal restores prior focus. User images remain conversation content rather than brand decoration. These adaptations are source-recorded; their native rendering is unverified.
 
 Animated activity uses breathing dots (1.4s ease-in-out) or spinning SVGs (1s linear). Both the operating-system reduced-motion preference and the explicit app preference reduce animation and transition durations to 0.001ms and disable smooth scrolling.
 

@@ -2,7 +2,7 @@
 
 ## Local Mac build
 
-The first Tauri/Rust macOS ARM64 app bundle builds successfully. The bundle is approximately 11.2 MiB, excluding the externally installed Codex engine. This is a package-size measurement, not a runtime memory benchmark. The app was launched locally; its native store was created and populated with the current Codex model.
+The first Tauri/Rust macOS ARM64 app bundle builds successfully. The bundle is approximately 11.2 MiB, excluding the externally installed Codex engine. This is a package-size measurement, not a runtime memory benchmark. The local bundle’s ad-hoc signature was verified after packaging. The app was launched locally; its native store was created and populated with the current Codex model.
 
 Rust checks passed, including persistence recovery, workspace boundary checks, and a live Codex transport test that streamed `ClaudeX Rust transport works.` and resumed the same native thread. The test thread was archived afterward. The JavaScript persistence tests and TypeScript/production frontend build pass.
 

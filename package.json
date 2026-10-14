@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tauri dev",
-    "build": "tauri build --bundles app",
+    "build": "tauri build --bundles app && node scripts/finalize-macos.mjs",
     "build:desktop": "tauri build",
     "dev:web": "node web/server/index.mjs --dev",
     "build:web": "tsc -p web/tsconfig.json && vite build --config web/vite.config.mjs",

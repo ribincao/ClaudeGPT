@@ -39,7 +39,7 @@ npm ci
 npm run dev
 ```
 
-Build a local Mac application for evaluation:
+Build a local Mac application for evaluation (the build applies and verifies an ad-hoc local signature):
 
 ```sh
 npm run build

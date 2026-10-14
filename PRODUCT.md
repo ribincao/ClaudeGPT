@@ -6,7 +6,7 @@
 web
 
 ## Stack
-React requested by the user. Local Node server connects to the installed Codex app-server. A native Mac version follows only after the user evaluates the web version.
+React is shared between the Tauri desktop and web preview. Rust provides the native Codex bridge; Node is used only for development and browser preview. The user approved the web style before requesting the desktop version.
 
 ## Users
 The workspace owner, using a Mac and seeking a lighter, calmer interface to Codex.

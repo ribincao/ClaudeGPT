@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-14T16:56:19.212425+00:00",
+  "generatedAt": "2026-10-14T17:40:21.985658+00:00",
   "title": "Design System: ClaudeX",
   "extensions": {
     "colorMeta": {
@@ -437,6 +437,38 @@
       "body": {
         "displayName": "System Sans Interface",
         "purpose": "Compact interface controls."
+      },
+      "title": {
+        "displayName": "Settings Title",
+        "purpose": "Settings section headings; mobile uses 16px."
+      },
+      "label": {
+        "displayName": "Action Label",
+        "purpose": "Reusable 13px action buttons and compact preference choices."
+      },
+      "mono": {
+        "displayName": "Code",
+        "purpose": "Inline and block code, raw file previews."
+      },
+      "body-mobile": {
+        "displayName": "Mobile Body",
+        "purpose": "Home composer on mobile and desktop search input."
+      },
+      "label-large": {
+        "displayName": "Large Label",
+        "purpose": "Navigation, suggestions, and settings row labels."
+      },
+      "label-small": {
+        "displayName": "Small Label",
+        "purpose": "Mode/model controls, field labels, connection status, and settings descriptions."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Attachment chips, activity detail, search excerpts, and settings footnotes."
+      },
+      "metadata-compact": {
+        "displayName": "Compact Metadata",
+        "purpose": "Account, model, usage, and workspace sublabels; file toolbar detail."
       }
     },
     "shadows": [
@@ -548,9 +580,9 @@
     {
       "name": "Text Field",
       "kind": "input",
-      "description": "Surface-filled field for short dialog text.",
-      "html": "<input class=\"ds-field\" aria-label=\"Conversation name\" placeholder=\"Conversation name\" />",
-      "css": ".ds-field{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:11px 12px;font:13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;caret-color:var(--accent);}.ds-field::placeholder{color:var(--faint);}.ds-field:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}",
+      "description": "Surface-filled dialog field and native Account executable path adaptation.",
+      "html": "<div class=\"ds-field-samples\"><input class=\"ds-field\" aria-label=\"Conversation name\" placeholder=\"Conversation name\" /><div class=\"ds-path\"><input aria-label=\"Codex executable path\" placeholder=\"Automatic detection\" /></div></div>",
+      "css": ".ds-field{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:7px;padding:11px 12px;font:13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;caret-color:var(--accent);}.ds-field::placeholder{color:var(--faint);}.ds-field:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}.ds-field-samples{display:flex;flex-direction:column;gap:16px;}.ds-path{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--muted);}.ds-path input{width:100%;min-width:0;border:0;background:transparent;color:var(--text);font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;caret-color:var(--accent);}.ds-path input::placeholder{color:var(--faint);}.ds-path input:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}",
       "refersTo": "field"
     },
     {
@@ -595,7 +627,7 @@
   ],
   "narrative": {
     "northStar": "A quiet personal Codex workspace",
-    "overview": "The shipped interface follows the user-pinned Claude Desktop references: charcoal surfaces, warm white text, understated navigation, generous serif greeting, and plain aligned settings rows. The orange knot is the visual identity anchor. This document records `src/styles.css` and the shipped React components; the reference screenshots establish the world, while the implementation establishes the values.\n\nThe conversation receives the largest uninterrupted area. Controls use compact system sans text, while the greeting and default assistant prose use Georgia. Depth comes primarily from neighboring surface tones and fine borders; menus and dialogs add soft shadows. The light theme preserves the same geometry and shifts the materials to warm paper tones.",
+    "overview": "The shipped interface follows the user-pinned Claude Desktop references: charcoal surfaces, warm white text, understated navigation, generous serif greeting, and plain aligned settings rows. The orange knot is the visual identity anchor. This document records `web/src/styles.css`, `web/index.html`, and the shared React components under `web/src/`; the reference screenshots establish the world, while the implementation establishes the values.\n\nThe conversation receives the largest uninterrupted area. Controls use compact system sans text, while the greeting and default assistant prose use Georgia. Depth comes primarily from neighboring surface tones and fine borders; menus and dialogs add soft shadows. The light theme preserves the same geometry and shifts the materials to warm paper tones.\n\nThe review in `.impeccable/review/desktop-style-review.md` records a scoped ship disposition for the shared home and General settings captures: `desktop.png`, `settings-desktop.png`, `mobile.png`, and `settings-mobile.png` in the same review directory. The native drag region, executable settings, and image preview below are recorded from source. Native window rendering and interaction, WebKit behavior, and Windows rendering remain unverified because the Mac was locked.",
     "keyCharacteristics": [
       "Warm neutral surfaces with a restrained orange accent.",
       "Serif greeting and reading text paired with compact sans controls.",
