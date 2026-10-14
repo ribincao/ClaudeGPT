@@ -45,3 +45,7 @@ export function subscribeEvents(receive: (event: any) => void, connection: (conn
   connect();
   return () => { canceled = true; clearTimeout(retry); socket?.close(); };
 }
+
+export async function setPageZoom(factor: number) {
+  if (desktop) await invoke('set_page_zoom', { factor });
+}

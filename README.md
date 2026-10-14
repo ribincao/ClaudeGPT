@@ -106,3 +106,7 @@ See [development](docs/development.md) and [architecture](docs/architecture.md).
 [MIT](LICENSE) © 2026 Ribin Cao. ClaudeX is a personal, noncommercial hobby project; MIT permits modification, redistribution, and commercial reuse by others.
 
 ClaudeX is independent and unaffiliated with Anthropic or OpenAI. Claude Desktop inspired the visual style; Codex provides the assistant engine. The orange-and-white icon derives from the OpenAI knot in [Simple Icons v11](https://cdn.jsdelivr.net/npm/simple-icons@11/icons/openai.svg). Third-party marks remain their owners' property. See [notices](THIRD_PARTY_NOTICES.md).
+
+### Interface controls
+
+Sidebar and Settings navigation use compact 34px rows and 16px icons. On macOS, use Command + plus/minus to zoom the whole interface and Command + 0 to reset. On Windows, use Ctrl instead. Desktop zoom ranges from 50% to 200% and persists across restarts. The web preview uses browser zoom.

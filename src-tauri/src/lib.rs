@@ -282,6 +282,13 @@ async fn save_text(app: tauri::AppHandle, name: String, content: String) -> Resu
     }
     Ok(())
 }
+#[tauri::command]
+fn set_page_zoom(window: tauri::WebviewWindow, factor: f64) -> Result<(), String> {
+    if !factor.is_finite() || !(0.5..=2.0).contains(&factor) {
+        return Err("Zoom must be between 50% and 200%.".into());
+    }
+    window.set_zoom(factor).map_err(|error| error.to_string())
+}
 pub fn run() {
     let app = tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _, _| {
@@ -313,7 +320,7 @@ pub fn run() {
                 });
             response
         })
-        .invoke_handler(tauri::generate_handler![request, save_text])
+        .invoke_handler(tauri::generate_handler![request, save_text, set_page_zoom])
         .setup(|app| {
             let directory = app.path().app_data_dir()?;
             let mut state = store::load(&directory);

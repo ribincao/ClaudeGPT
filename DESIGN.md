@@ -325,3 +325,7 @@ Animated activity uses breathing dots (1.4s ease-in-out) or spinning SVGs (1s li
 - **Don't** replace the pinned knot identity or serif greeting with an unrelated visual style.
 - **Don't** turn user attachment imagery or isolated content formatting into reusable brand decoration.
 - **Don't** replace plain settings rows with decorative card grids.
+
+### Compact navigation refinement
+
+User feedback reduced main and Settings navigation to 34px minimum rows, 7px vertical padding, and 2px sibling gaps. UI icons now default to 16px; icon-only controls use 14px marks while retaining their button areas. Native page zoom scales the shared interface from 50% to 200% with persisted Command/Ctrl shortcuts.

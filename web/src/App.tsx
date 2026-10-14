@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Plus, Search, PanelLeftClose, PanelLeftOpen, FolderOpen, Sparkles, ChevronDown, MoreHorizontal, Settings2, ArrowUpRight, PenLine, GraduationCap, Code2, Compass, Pin, Archive, Trash2, Download, Check, Copy, Terminal, ChevronRight, FileText, ShieldCheck, LoaderCircle, X, AlertCircle, MessageSquare, ArrowDown, RefreshCw } from 'lucide-react';
-import { api, copy, download, folderName, modelName, subscribeEvents, attachmentUrl, desktop } from './api';
+import { api, copy, download, folderName, modelName, subscribeEvents, attachmentUrl, desktop, setPageZoom } from './api';
 import { Composer } from './Composer';
 import { Settings } from './Settings';
 import { Files } from './Files';
@@ -78,6 +78,25 @@ export default function App() {
     };
     window.addEventListener('keydown', key); return () => window.removeEventListener('keydown', key);
   }, [newChat, openSettings, closeDialog]);
+  useEffect(() => {
+    if (!desktop) return; // Browser previews keep their browser's native zoom shortcuts.
+    const saved = Number(localStorage.getItem('claudex-page-zoom') || 1);
+    let factor = Number.isFinite(saved) ? Math.min(2, Math.max(.5, saved)) : 1;
+    const apply = () => { void setPageZoom(factor).catch(e => toast(`Could not change zoom: ${String(e)}`)); };
+    apply();
+    const zoom = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+      const increase = event.key === '+' || event.key === '=' || event.code === 'NumpadAdd';
+      const decrease = event.key === '-' || event.code === 'NumpadSubtract';
+      if (!increase && !decrease && event.key !== '0') return;
+      event.preventDefault();
+      factor = event.key === '0' ? 1 : Math.min(2, Math.max(.5, Math.round((factor + (increase ? .1 : -.1)) * 10) / 10));
+      localStorage.setItem('claudex-page-zoom', String(factor));
+      apply();
+    };
+    window.addEventListener('keydown', zoom);
+    return () => window.removeEventListener('keydown', zoom);
+  }, [toast]);
   useEffect(() => { document.title = active ? `${active.title} · ClaudeX` : 'ClaudeX'; }, [active?.title]);
   useEffect(() => {
     if (!accountMenu && !chatMenu) return;
