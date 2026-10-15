@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Plus, Search, PanelLeftClose, PanelLeftOpen, FolderOpen, Sparkles, ChevronDown, MoreHorizontal, Settings2, ArrowUpRight, PenLine, GraduationCap, Code2, Compass, Pin, Archive, Trash2, Download, Check, Copy, Terminal, ChevronRight, FileText, ShieldCheck, LoaderCircle, X, AlertCircle, MessageSquare, ArrowDown, RefreshCw } from 'lucide-react';
 import { api, copy, download, folderName, modelName, subscribeEvents, attachmentUrl, desktop, setPageZoom } from './api';
 import { ProjectConversations } from './ProjectConversations';
@@ -14,6 +15,9 @@ export default function App() {
   const [state, setState] = useState<State | null>(null), [activeId, setActiveId] = useState<string | null>(() => localStorage.getItem('claudex-active'));
   const [sidebar, setSidebar] = useState(() => window.innerWidth > 760), [settingsOpen, setSettingsOpen] = useState(false), [settingsSection, setSettingsSection] = useState('general');
   const [dialog, setDialog] = useState<Dialog>(null), [query, setQuery] = useState(''), [accountMenu, setAccountMenu] = useState(false);
+  const chatMenuAnchor = useRef<HTMLButtonElement | null>(null);
+  const dismissChatMenu = useCallback(() => setChatMenu(null), []);
+  function toggleChatMenu(id: string, anchor: HTMLButtonElement) { chatMenuAnchor.current = anchor; setChatMenu(previous => previous === id ? null : id); }
   const [chatMenu, setChatMenu] = useState<string | null>(null), [targetId, setTargetId] = useState<string | null>(null), [rename, setRename] = useState('');
   const [drafts, setDrafts] = useState<Record<string, string>>(() => { try { return JSON.parse(localStorage.getItem('claudex-drafts') || '{}'); } catch { return {}; } });
   const [busy, setBusy] = useState(false), [workspacePath, setWorkspacePath] = useState('');
@@ -112,7 +116,7 @@ export default function App() {
   useEffect(() => { document.title = active ? `${active.title} · ClaudeX` : 'ClaudeX'; }, [active?.title]);
   useEffect(() => {
     if (!accountMenu && !chatMenu) return;
-    const outside = (event: MouseEvent) => { if (!(event.target as HTMLElement).closest('.menu-anchor')) { setAccountMenu(false); setChatMenu(null); } };
+    const outside = (event: MouseEvent) => { if (!(event.target as HTMLElement).closest('.menu-anchor, .chat-popup')) { setAccountMenu(false); setChatMenu(null); } };
     document.addEventListener('mousedown', outside); return () => document.removeEventListener('mousedown', outside);
   }, [accountMenu, chatMenu]);
   const save = useCallback(async (changes: Partial<Preferences>) => { try { await api('/settings', 'POST', changes); } catch (e) { toast((e as Error).message); } }, [toast]);
@@ -172,12 +176,12 @@ export default function App() {
       <nav className="main-nav" aria-label="Main navigation"><button className="new-chat" onClick={newChat}><Plus size={20} /><span>New chat</span><kbd>⌘ N</kbd></button><button onClick={() => { setDialog('search'); setQuery(''); }}><Search size={18} /><span>Search chats</span><kbd>⌘ K</kbd></button><button onClick={openWorkspace}><FolderOpen size={18} /><span>Projects</span></button><button onClick={openSkills}><Sparkles size={18} /><span>Skills</span></button></nav>
       <div className="conversation-list"><div className="list-heading">Projects<button className="icon-button" title="Search conversations" aria-label="Search conversations" onClick={() => setDialog('search')}><Search size={14} /></button></div>
         {state.historyWarning && <p className="sidebar-empty" role="status">{state.historyWarning}</p>}
-        <ProjectConversations projects={state.projects || []} chats={visibleChats} renderChat={chat => (<div className={`chat-row ${activeId === chat.id ? 'active' : ''}`}><button className="chat-select" onClick={() => chooseChat(chat.id)}>{chat.pinned ? <Pin size={13} /> : chat.status === 'running' ? <span className="running-dot" /> : <MessageSquare size={13} />}<span>{chat.title}</span></button><div className="menu-anchor"><button className="icon-button chat-more" aria-label={`Options for ${chat.title}`} onClick={() => setChatMenu(chatMenu === chat.id ? null : chat.id)}><MoreHorizontal size={16} /></button>{chatMenu === chat.id && <ChatMenu chat={chat} rename={() => { setTargetId(chat.id); setRename(chat.title); setDialog('rename'); setChatMenu(null); }} pin={() => chatAction(chat.id, 'PATCH', { pinned: !chat.pinned })} archive={() => chatAction(chat.id, 'PATCH', { archived: true })} remove={() => { setTargetId(chat.id); setDialog('delete'); setChatMenu(null); }} exportChat={() => exportChat(chat)} />}</div></div>)} />
+        <ProjectConversations projects={state.projects || []} chats={visibleChats} renderChat={chat => (<div className={`chat-row ${activeId === chat.id ? 'active' : ''}`}><button className="chat-select" onClick={() => chooseChat(chat.id)}>{chat.pinned ? <Pin size={13} /> : chat.status === 'running' ? <span className="running-dot" /> : <MessageSquare size={13} />}<span>{chat.title}</span></button><div className="menu-anchor"><button className="icon-button chat-more" aria-label={`Options for ${chat.title}`} aria-haspopup="menu" aria-expanded={chatMenu === chat.id} onClick={event => toggleChatMenu(chat.id, event.currentTarget)}><MoreHorizontal size={16} /></button>{chatMenu === chat.id && <ChatMenu anchor={chatMenuAnchor.current} close={dismissChatMenu} chat={chat} rename={() => { setTargetId(chat.id); setRename(chat.title); setDialog('rename'); setChatMenu(null); }} pin={() => chatAction(chat.id, 'PATCH', { pinned: !chat.pinned })} archive={() => chatAction(chat.id, 'PATCH', { archived: true })} remove={() => { setTargetId(chat.id); setDialog('delete'); setChatMenu(null); }} exportChat={() => exportChat(chat)} />}</div></div>)} />
       </div>
       <div className="sidebar-footer"><div className="menu-anchor account-anchor">{accountMenu && <div className="popup account-popup"><div className="account-menu-title">{state.account?.email || state.settings.displayName}</div><button onClick={() => openSettings()}><Settings2 size={17} />Settings<kbd>⌘ ,</kbd></button><button onClick={() => openSettings('account')}><ShieldCheck size={17} />Codex connection</button><button onClick={() => openSettings('about')}><Sparkles size={17} />About ClaudeX</button></div>}<button className="account-button" aria-expanded={accountMenu} onClick={() => setAccountMenu(!accountMenu)}><div className="avatar">{(state.settings.displayName || 'R')[0].toUpperCase()}</div><div><span>{state.settings.displayName || 'Your account'}</span><small><span className={`status-dot ${ready ? 'live' : ''}`} />{ready ? 'Codex connected' : 'Connect Codex'}</small></div><ChevronDown size={14} /></button></div><button className="icon-button settings-shortcut" aria-label="Open settings" onClick={() => openSettings()}><Settings2 size={19} /></button></div>
     </aside></>}
     <main className={`main ${filesOpen ? 'with-files' : ''}`}>
-      <header className="main-header"><div>{!sidebar && <button className="icon-button" title="Open sidebar" aria-label="Open sidebar" onClick={() => setSidebar(true)}><PanelLeftOpen size={20} /></button>}{active && <span className="conversation-title">{active.title}</span>}</div><div>{active ? <><button className={`header-workspace ${filesOpen ? 'active' : ''}`} onClick={() => { setFilesOpen(!filesOpen); setPreviewFile(null); }}><FolderOpen size={16} /><span>Files</span></button><div className="menu-anchor"><button className="icon-button" aria-label="Conversation options" onClick={() => setChatMenu(chatMenu === `header-${active.id}` ? null : `header-${active.id}`)}><MoreHorizontal size={20} /></button>{chatMenu === `header-${active.id}` && <ChatMenu chat={active} rename={() => { setTargetId(active.id); setRename(active.title); setDialog('rename'); setChatMenu(null); }} pin={() => chatAction(active.id, 'PATCH', { pinned: !active.pinned })} archive={() => chatAction(active.id, 'PATCH', { archived: true })} remove={() => { setTargetId(active.id); setDialog('delete'); setChatMenu(null); }} exportChat={() => exportChat(active)} />}</div></> : <button className="engine-status" onClick={() => openSettings('account')}><span className={`status-dot ${ready ? 'live' : ''}`} />{ready ? 'Local Codex' : online ? 'Connect Codex' : 'Reconnecting…'}<ChevronRight size={12} /></button>}</div></header>
+      <header className="main-header"><div>{!sidebar && <button className="icon-button" title="Open sidebar" aria-label="Open sidebar" onClick={() => setSidebar(true)}><PanelLeftOpen size={20} /></button>}{active && <span className="conversation-title">{active.title}</span>}</div><div>{active ? <><button className={`header-workspace ${filesOpen ? 'active' : ''}`} onClick={() => { setFilesOpen(!filesOpen); setPreviewFile(null); }}><FolderOpen size={16} /><span>Files</span></button><div className="menu-anchor"><button className="icon-button" aria-label="Conversation options" aria-haspopup="menu" aria-expanded={chatMenu === `header-${active.id}`} onClick={event => toggleChatMenu(`header-${active.id}`, event.currentTarget)}><MoreHorizontal size={20} /></button>{chatMenu === `header-${active.id}` && <ChatMenu anchor={chatMenuAnchor.current} close={dismissChatMenu} chat={active} rename={() => { setTargetId(active.id); setRename(active.title); setDialog('rename'); setChatMenu(null); }} pin={() => chatAction(active.id, 'PATCH', { pinned: !active.pinned })} archive={() => chatAction(active.id, 'PATCH', { archived: true })} remove={() => { setTargetId(active.id); setDialog('delete'); setChatMenu(null); }} exportChat={() => exportChat(active)} />}</div></> : <button className="engine-status" onClick={() => openSettings('account')}><span className={`status-dot ${ready ? 'live' : ''}`} />{ready ? 'Local Codex' : online ? 'Connect Codex' : 'Reconnecting…'}<ChevronRight size={12} /></button>}</div></header>
       {!active?.items.length ? <div className="home"><div className="home-inner"><h1><span>{greeting}, {state.settings.displayName || 'you'}.</span></h1>{composer}<div className="suggestions">{[{ icon: PenLine, text: 'Write', prompt: 'Help me write ' }, { icon: GraduationCap, text: 'Learn', prompt: 'Help me understand ' }, { icon: Code2, text: 'Code', prompt: 'Help me build ' }, { icon: Compass, text: 'Plan', prompt: 'Help me plan ' }].map(({ icon: Icon, text, prompt }) => <button key={text} onClick={() => { setValue(prompt); if (text === 'Code')  document.querySelector<HTMLTextAreaElement>('.composer textarea')?.focus(); }}><Icon size={18} strokeWidth={1.5} />{text}</button>)}</div>{!ready && <div className="connect-hint"><span>{online ? state.engineError || 'Connect your Codex account to start chatting.' : 'The local server is reconnecting. Your conversations are saved.'}</span><button className="text-button" onClick={() => openSettings('account')}>Open connection settings<ArrowUpRight size={14} /></button></div>}</div><p className="home-footer">A little more room to think.</p></div> : <>
         <div className="transcript-scroll" ref={scroll} onScroll={e => { const el = e.currentTarget; setNearBottom(el.scrollHeight - el.scrollTop - el.clientHeight < 120); }}><div className="transcript">
           {active.archived && <div className="archived-notice"><Archive size={16} />This conversation is archived.<button className="text-button" onClick={() => chatAction(active.id, 'PATCH', { archived: false })}>Restore</button></div>}
@@ -211,8 +215,50 @@ function groupLabel(chat: Chat) {
   if (chat.updatedAt >= today.getTime() - 86400000) return 'Yesterday';
   return 'Earlier';
 }
-function ChatMenu({ chat, rename, pin, archive, remove, exportChat }: { chat: Chat; rename: () => void; pin: () => void; archive: () => void; remove: () => void; exportChat: () => void }) {
-  return <div className="popup chat-popup"><button onClick={rename}><PenLine size={15} />Rename</button><button onClick={pin}><Pin size={15} />{chat.pinned ? 'Unpin' : 'Pin conversation'}</button><button onClick={exportChat}><Download size={15} />Export as Markdown</button><button onClick={archive}><Archive size={15} />Archive</button><div className="popup-divider" /><button className="danger-text" onClick={remove}><Trash2 size={15} />Delete</button></div>;
+function ChatMenu({ anchor, close, chat, rename, pin, archive, remove, exportChat }: { anchor: HTMLButtonElement | null; close: () => void; chat: Chat; rename: () => void; pin: () => void; archive: () => void; remove: () => void; exportChat: () => void }) {
+  const menu = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ left: 12, top: 12, ready: false });
+  useLayoutEffect(() => {
+    const place = () => {
+      const panel = menu.current;
+      if (!anchor?.isConnected || !panel) { close(); return; }
+      const rect = anchor.getBoundingClientRect();
+      // A portal escapes the sidebar's overflow clipping. Clamp both edges to the viewport.
+      const left = Math.max(12, Math.min(rect.right - panel.offsetWidth, window.innerWidth - panel.offsetWidth - 12));
+      const below = rect.bottom + 6;
+      const top = Math.max(12, Math.min(below + panel.offsetHeight <= window.innerHeight - 12 ? below : rect.top - panel.offsetHeight - 6, window.innerHeight - panel.offsetHeight - 12));
+      setPosition({ left, top, ready: true });
+    };
+    place();
+    window.addEventListener('resize', place);
+    document.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      document.removeEventListener('scroll', place, true);
+      if (menu.current?.contains(document.activeElement) || document.activeElement === document.body) anchor?.focus();
+    };
+  }, [anchor, close]);
+  useLayoutEffect(() => { if (position.ready) menu.current?.querySelector<HTMLButtonElement>('button')?.focus(); }, [position.ready]);
+  function key(event: React.KeyboardEvent<HTMLDivElement>) {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    const buttons = [...menu.current!.querySelectorAll<HTMLButtonElement>('button')];
+    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    if (event.key === 'Escape' || event.key === 'Tab') { if (event.key === 'Escape') event.preventDefault(); close(); anchor?.focus(); return; }
+    if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+      event.preventDefault();
+      buttons[event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length]?.focus();
+    }
+    const action = ({ p: pin, r: rename, d: remove } as Record<string, () => void>)[event.key.toLowerCase()];
+    if (action) { event.preventDefault(); action(); }
+  }
+  return createPortal(<div ref={menu} role="menu" aria-label="Conversation actions" className="popup chat-popup" style={{ left: position.left, top: position.top, visibility: position.ready ? 'visible' : 'hidden' }} onKeyDown={key}>
+    <button role="menuitem" onClick={pin}><Pin size={16} />{chat.pinned ? 'Unpin' : 'Pin'}<kbd>P</kbd></button>
+    <button role="menuitem" onClick={rename}><PenLine size={16} />Rename<kbd>R</kbd></button>
+    <button role="menuitem" onClick={exportChat}><Download size={16} />Export as Markdown</button>
+    <button role="menuitem" onClick={archive}><Archive size={16} />Archive</button>
+    <div className="popup-divider" role="separator" />
+    <button role="menuitem" className="danger-text" onClick={remove}><Trash2 size={16} />Delete<kbd>D</kbd></button>
+  </div>, document.body);
 }
 function Message({ item, onFile, toast }: { item: Item; onFile: (file: string) => void; toast: (message: string) => void }) {
   const [copied, setCopied] = useState(false);

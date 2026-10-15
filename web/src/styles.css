@@ -171,8 +171,11 @@ kbd { font-family: inherit; color: var(--faint); font-size: 12px; white-space: n
 .effort-options button:hover, .effort-options button.active { background: var(--selected); color: var(--text); }
 .account-popup { bottom: 61px; left: 0; width: 235px; }
 .account-menu-title { padding: 10px; color: var(--muted); font-size: 10px; overflow: hidden; text-overflow: ellipsis; }
-.chat-popup { left: 0; top: 30px; width: 220px; }
-.main-header .chat-popup { right: 0; left: auto; }
+.chat-popup { position: fixed; z-index: 120; width: min(244px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; min-width: 0; padding: 8px; background: var(--surface); border-radius: 12px; }
+.chat-popup > button { min-height: 32px; padding: 6px 8px; gap: 10px; font-size: 14px; line-height: 20px; }
+.chat-popup kbd { font-size: 12px; }
+.chat-popup .popup-divider { margin: 6px 4px; }
+
 .transcript-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; scroll-behavior: auto; }
 .transcript { max-width: var(--chat-width); margin: 0 auto; padding: 27px 25px 35px; }
 .user-message { display: flex; justify-content: flex-end; margin: 4px 0 27px; }

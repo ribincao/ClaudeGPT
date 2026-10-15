@@ -341,3 +341,7 @@ After direct comparison with Claude, sidebar and Settings navigation use 28px mi
 ### No in-app logo marks
 
 Per user feedback, remove brand image marks from the sidebar, greeting, assistant messages, thinking indicator, launch screen, and Settings. Keep the product name as text and preserve the OS app icon and browser favicon. Assistant text begins at the transcript content edge without an empty avatar gutter. Attachment and generated-content images remain supported. This supersedes earlier in-app knot identity guidance.
+
+### Conversation action menu
+
+Render the conversation menu in a body portal with fixed positioning, anchored to its trigger and clamped within a 12px viewport inset. It must escape sidebar scroll clipping and reposition during scroll/resize. Use compact 32px rows, 16px icons, right-aligned keyboard hints, and a divider above Delete. Existing Codex actions remain functional; keyboard navigation includes arrows, Home/End, Escape, and P/R/D while focused.
