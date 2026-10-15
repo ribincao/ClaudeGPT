@@ -126,3 +126,7 @@ External links in assistant replies open in the system default browser on deskto
 ### Rename compatibility
 
 ClaudeGPT retains its original `io.github.ribincao.claudex` application identifier, application-data folder, browser storage keys, and internal transport identifiers. Keeping these stable preserves existing conversations, preferences, drafts, and attachment links when replacing ClaudeX. Product names, repository URLs, and source checkout paths use ClaudeGPT/claudegpt.
+
+### Conversation already has an active writer
+
+Reading saved Codex history does not transfer its write ownership. If Codex reports that a thread already has an active writer, another Codex app-server/CLI process owns it; that client can retain ownership while idle. Finish any work there and quit that client before retrying in ClaudeGPT, or start a new conversation. ClaudeGPT keeps the unsent draft and does not force unlocks, stop another client, or silently fork the conversation.

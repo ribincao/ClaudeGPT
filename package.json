@@ -16,7 +16,8 @@
     "test:browser": "node web/scripts/browser-test.mjs",
     "tauri": "tauri",
     "test:sidebar": "node web/scripts/sidebar-test.mjs",
-    "test:links": "node web/scripts/link-test.mjs"
+    "test:links": "node web/scripts/link-test.mjs",
+    "test:writer-conflict": "node web/scripts/writer-conflict-test.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

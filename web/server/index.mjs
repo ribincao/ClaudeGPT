@@ -20,6 +20,7 @@ const approvals = new Map();
 let account = null, models = [], engineError = null;
 function errorMessage(value) {
   if (typeof value !== 'string') return 'Codex encountered an error. Please try again.';
+  if (value.toLowerCase().includes('already has an active writer')) return 'Another Codex client owns this conversation, even if it is idle. Use New chat, or finish its work and quit that client before retrying. Your draft has been kept.';
   try { const parsed = JSON.parse(value); return parsed.error?.message || parsed.message || value; } catch { return value; }
 }
 const app = express(), server = createServer(app);
@@ -336,7 +337,7 @@ if (process.argv.includes('--dev')) {
   app.use(express.static(path.join(root, 'dist')));
   app.get('/{*path}', (_, res) => res.sendFile(path.join(root, 'dist/index.html')));
 }
-app.use((error, _, res, next) => { if (res.headersSent) return next(error); res.status(error.status || 400).json({ error: error.message || 'Something went wrong. Please try again.' }); });
+app.use((error, _, res, next) => { if (res.headersSent) return next(error); res.status(error.status || 400).json({ error: errorMessage(error.message || 'Something went wrong. Please try again.') }); });
 
 server.listen(port, '127.0.0.1', () => {
   console.log(`ClaudeGPT is ready at http://localhost:${port}`);

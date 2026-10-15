@@ -254,11 +254,38 @@ pub fn friendly_error(value: &Value) -> String {
     let text = value
         .as_str()
         .unwrap_or("Codex encountered an error. Please try again.");
-    serde_json::from_str::<Value>(text)
+    let message = serde_json::from_str::<Value>(text)
         .ok()
         .and_then(|e| e["error"]["message"].as_str().map(str::to_owned))
-        .unwrap_or(text.to_owned())
+        .unwrap_or(text.to_owned());
+    if message
+        .to_lowercase()
+        .contains("already has an active writer")
+    {
+        return "Another Codex client owns this conversation, even if it is idle. Use New chat, or finish its work and quit that client before retrying. Your draft has been kept.".into();
+    }
+    message
 }
+
+#[cfg(test)]
+mod error_tests {
+    use super::*;
+    #[test]
+    fn writer_conflict_explains_recovery_without_exposing_thread_id() {
+        let raw = "thread private-thread-id already has an active writer";
+        let plain = friendly_error(&json!(raw));
+        let nested = friendly_error(&json!(json!({"error":{"message":raw}}).to_string()));
+        assert_eq!(plain, nested);
+        assert!(plain.contains("quit that client"));
+        assert!(plain.contains("draft has been kept"));
+        assert!(!plain.contains("private-thread-id"));
+        assert_eq!(
+            friendly_error(&json!("Other backend error")),
+            "Other backend error"
+        );
+    }
+}
+
 #[tauri::command]
 async fn request(
     state: tauri::State<'_, Arc<Backend>>,
@@ -266,7 +293,9 @@ async fn request(
     method: String,
     body: Value,
 ) -> Result<Value, String> {
-    routes::request(state.inner().clone(), &path, &method, body).await
+    routes::request(state.inner().clone(), &path, &method, body)
+        .await
+        .map_err(|error| friendly_error(&json!(error)))
 }
 #[tauri::command]
 async fn save_text(app: tauri::AppHandle, name: String, content: String) -> Result<(), String> {
