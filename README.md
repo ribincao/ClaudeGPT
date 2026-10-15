@@ -7,7 +7,7 @@ A lightweight, Claude-inspired desktop interface for **Codex**, built with **Tau
 ## Features
 
 - Real streaming Codex conversations with Markdown and copyable code blocks.
-- Chat mode for reading and discussing; Work mode for editing inside a selected folder.
+- Codex conversations inside a selected workspace, with a single composer workflow.
 - Saved chats and drafts, search, pinning, renaming, archiving, and Markdown/JSON export.
 - Model and reasoning controls, custom instructions, installed skills, and in-conversation approvals.
 - Workspace file browser, text/Markdown previews, and image/text/source-code attachments.
@@ -80,13 +80,17 @@ LICENSE                  MIT
 
 Desktop UI preferences, transcript cache, and attachments live in the operating system's application-data directory (`~/Library/Application Support/io.github.ribincao.claudex` on macOS). The preview uses separate, ignored `.data/` state. Prompts and selected context go to OpenAI through Codex during inference.
 
-Chat requests read-only access. Work permits writes inside the chosen workspace; Codex can request additional approval. Grants are scoped to the current turn. Review important changes. Desktop deletion affects the original Codex thread after confirmation; the preview's Clear history only clears its own index.
+New chats use workspace-write access with approvals. Current sends explicitly apply ClaudeGPT’s model and permission defaults, including to reopened threads; preserving effective saved settings is a known gap tracked in [the parity audit](docs/codex-parity.md). Permission grants from the current approval UI are turn-scoped. Review important changes. Desktop deletion affects the original Codex thread after confirmation; the preview's Clear history only clears its own index.
 
 ## First-version scope
 
 The core workflow is implemented. Custom avatars, pets, voice, PDF/Word ingestion, cloud sync, and external MCP form completion are future features. Unsupported forms can be declined. Saved local Codex threads are loaded automatically; regular ChatGPT website conversations and hosted-only history are not available through this local protocol.
 
 Windows has a portable backend and packaging configuration but still needs an actual Windows build and runtime test. [Verification notes](VERIFICATION.md) distinguish tested behavior from intended support.
+
+## Codex parity roadmap
+
+See the [source-verified parity audit and implementation backlog](docs/codex-parity.md) for missing features, behavior mismatches, capability constraints, and the recommended order of work.
 
 ## Contributing
 
@@ -119,7 +123,7 @@ Settings → Account reuses the existing account or starts Codex's ChatGPT brows
 
 ### Codex-only navigation
 
-The composer has no Chat/Work switch. New conversations use the Codex workspace-write workflow with explicit approvals; saved conversations retain their previous permissions. The desktop sidebar reads Codex projects, groups assigned threads under each project, shows five threads per project with Show more, and keeps unassigned threads under collapsed Recents. It uses Codex recency metadata for ordering. Where project assignment migration is incomplete, it reads the local desktop metadata as a compatibility fallback, without changing that file. This fallback is an internal format and may need updating after Codex upgrades.
+The composer has no Chat/Work switch. New conversations use the Codex workspace-write workflow with explicit approvals; saved conversation permissions are not yet faithfully preserved on send (see audit item C01). The desktop sidebar reads Codex projects, groups assigned threads under each project, shows five threads per project with Show more, and keeps unassigned threads under collapsed Recents. It uses Codex recency metadata for ordering. Where project assignment migration is incomplete, it reads the local desktop metadata as a compatibility fallback, without changing that file. This fallback is an internal format and may need updating after Codex upgrades.
 
 External links in assistant replies open in the system default browser on desktop; email links use their registered mail app. Codex account data does not include a profile-photo field, so the account control currently uses a letter placeholder rather than synchronizing a ChatGPT avatar.
 
