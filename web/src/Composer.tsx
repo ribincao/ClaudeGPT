@@ -3,10 +3,10 @@ import { Plus, ArrowUp, Square, ChevronDown, Check, X, FolderOpen, FileText, Loa
 import { api, folderName, modelName, attachmentUrl } from './api';
 import type { Attachment, Settings, Model, Skill } from './types';
 
-export function Composer({ value, setValue, onSend, onStop, busy, running, settings, models, mode, setMode, workspace, onWorkspace, onSave, toast, connected, selectedSkill, clearSkill, openSkills, draftKey }: {
+export function Composer({ value, setValue, onSend, onStop, busy, running, settings, models, workspace, onWorkspace, onSave, toast, connected, selectedSkill, clearSkill, openSkills, draftKey }: {
   value: string; setValue: (value: string) => void; onSend: (attachments: Attachment[]) => Promise<boolean>;
   onStop: () => void; busy: boolean; running: boolean; settings: Settings; models: Model[];
-  mode: 'chat' | 'work'; setMode: (mode: 'chat' | 'work') => void; workspace: string; onWorkspace: () => void;
+  workspace: string; onWorkspace: () => void;
   onSave: (s: Partial<Settings>) => void; toast: (message: string) => void; connected: boolean;
   selectedSkill: Skill | null; clearSkill: () => void; openSkills: () => void; draftKey: string;
 }) {
@@ -57,7 +57,6 @@ export function Composer({ value, setValue, onSend, onStop, busy, running, setti
         <div className="menu-anchor"><button className="icon-button add-button" aria-label="Add attachment or skill" aria-expanded={attachMenu} onClick={() => { setAttachMenu(!attachMenu); setPicker(false); }}><Plus size={23} strokeWidth={1.6} /></button>
           {attachMenu && <div className="popup attach-popup"><button onClick={() => { fileInput.current?.click(); setAttachMenu(false); }}><Paperclip size={17} />Attach files<span>⌘ V</span></button><button onClick={() => { openSkills(); setAttachMenu(false); }}><Sparkles size={17} />Use a skill</button><button onClick={() => { onWorkspace(); setAttachMenu(false); }}><FolderOpen size={17} />Choose workspace</button><p>Images, text, and source files · up to 10 MB</p></div>}
         </div>
-        <div className="mode-switch" role="group" aria-label="Conversation mode"><button className={mode === 'chat' ? 'active' : ''} onClick={() => setMode('chat')} title="Read and discuss your workspace">Chat</button><button className={mode === 'work' ? 'active' : ''} onClick={() => setMode('work')} title="Edit files in your workspace">Work</button></div>
         <button className="workspace-chip" title={workspace} onClick={onWorkspace}><FolderOpen size={15} /><span>{folderName(workspace)}</span></button>
       </div>
       <div className="composer-right">

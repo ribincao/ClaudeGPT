@@ -480,3 +480,16 @@ kbd { font-family: inherit; color: var(--faint); font-size: 12px; white-space: n
 .lucide { max-width: 16px; max-height: 16px; flex-shrink: 0; }
 .icon-button .lucide { max-width: 14px; max-height: 14px; }
 .main-nav .lucide, .settings-sidebar nav .lucide { width: 16px; height: 16px; }
+
+.project-conversations { margin-top: 12px; }
+.project-conversations > summary, .recent-conversations > summary { display: flex; align-items: center; gap: 10px; padding: 9px 12px; list-style: none; cursor: pointer; color: var(--text); font-size: 14px; border-radius: 7px; }
+.project-conversations > summary::-webkit-details-marker, .recent-conversations > summary::-webkit-details-marker { display: none; }
+.project-conversations > summary:hover, .recent-conversations > summary:hover { background: var(--surface); }
+.project-chat-list { padding-left: 12px; }
+.project-chat-list .chat-select > svg { display: none; }
+.project-show-more { padding: 9px 12px; color: var(--faint); font-size: 13px; border-radius: 6px; }
+.project-show-more:hover { color: var(--text); background: var(--surface); }
+.recent-conversations { margin-top: 20px; }
+.recent-conversations > summary { color: var(--muted); }
+.recent-conversations > summary > span { margin-left: auto; font-size: 11px; }
+.recent-conversations[open] > summary > svg { transform: rotate(180deg); }

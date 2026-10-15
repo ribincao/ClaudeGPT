@@ -14,7 +14,7 @@ pub fn defaults() -> Value {
     let home = dirs::document_dir()
         .or_else(dirs::home_dir)
         .unwrap_or_else(|| PathBuf::from("."));
-    json!({"settings":{"theme":"dark","font":"serif","textSize":"medium","width":"medium","reducedMotion":false,"displayName":"you","enterToSend":true,"model":"","effort":"medium","workspace":home,"approvalPolicy":"on-request","customInstructions":"","enginePath":""},"chats":[],"workspaces":[home]})
+    json!({"settings":{"theme":"dark","font":"serif","textSize":"medium","width":"medium","reducedMotion":false,"displayName":"you","enterToSend":true,"model":"","effort":"medium","workspace":home,"approvalPolicy":"on-request","customInstructions":"","enginePath":""},"projects":[],"chats":[],"workspaces":[home]})
 }
 pub fn load(dir: &Path) -> Value {
     let _ = fs::create_dir_all(dir);
@@ -27,6 +27,9 @@ pub fn load(dir: &Path) -> Value {
                     state["settings"][key] = value.clone();
                 }
                 state["chats"] = saved["chats"].clone();
+                if saved["projects"].is_array() {
+                    state["projects"] = saved["projects"].clone();
+                }
                 state["workspaces"] = saved["workspaces"].clone();
             }
             _ => {
@@ -43,7 +46,7 @@ pub fn load(dir: &Path) -> Value {
     state
 }
 pub fn save(dir: &Path, state: &Value) -> Result<(), String> {
-    let persistent = json!({"settings":state["settings"],"chats":state["chats"],"workspaces":state["workspaces"]});
+    let persistent = json!({"settings":state["settings"],"chats":state["chats"],"workspaces":state["workspaces"],"projects":state["projects"]});
     let tmp = dir.join("state.tmp");
     fs::write(
         &tmp,

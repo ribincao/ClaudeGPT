@@ -207,7 +207,7 @@ pub async fn request(
                     .as_str()
                     .unwrap_or(string(&s, "workspace")),
             )?;
-            let chat = json!({"id":Uuid::new_v4().to_string(),"title":"New conversation","workspace":workspace,"mode":if body["mode"]=="work"{"work"}else{"chat"},"items":[],"createdAt":store::now(),"updatedAt":store::now(),"status":"idle","threadId":null,"activeTurnId":null,"pinned":false,"archived":false});
+            let chat = json!({"id":Uuid::new_v4().to_string(),"title":"New conversation","workspace":workspace,"mode":"work","items":[],"createdAt":store::now(),"updatedAt":store::now(),"status":"idle","threadId":null,"activeTurnId":null,"pinned":false,"archived":false});
             backend.state.lock().unwrap()["chats"]
                 .as_array_mut()
                 .unwrap()

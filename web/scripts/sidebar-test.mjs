@@ -1,0 +1,31 @@
+import { chromium } from 'playwright';
+import assert from 'node:assert/strict';
+const base = 'http://localhost:4317';
+const state = await (await fetch(`${base}/api/state`)).json();
+state.projects = [{ id: 'ribin', name: 'Ribin', roots: [] }, { id: 'kuse', name: 'Kuse', roots: [] }];
+state.chats = Array.from({ length: 6 }, (_, i) => ({ id: `project-${i}`, title: `Project conversation ${i}`, projectId: 'ribin', workspace: '/tmp', mode: 'work', items: [], createdAt: 1, updatedAt: 100 - i, status: 'idle', archived: false }));
+state.chats.push({ ...state.chats[0], id: 'test', title: 'Unassigned test conversation', projectId: null });
+const browser = await chromium.launch({ headless: true, executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+try {
+ const page = await browser.newPage({ viewport: { width: 1280, height: 860 } });
+ await page.routeWebSocket('**/events', socket => { socket.send(JSON.stringify({ type: 'state', state })); });
+ await page.route('**/api/state', route => route.fulfill({ json: state }));
+ await page.goto(base);
+ await page.getByRole('heading', { level: 1 }).waitFor();
+ assert.equal(await page.getByRole('group', { name: 'Conversation mode' }).count(), 0);
+ const project = page.locator('.project-conversations').first();
+ assert.equal(await project.locator('.chat-row').count(), 5);
+ assert.equal(await page.getByRole('button', { name: 'Unassigned test conversation', exact: true }).isVisible(), false);
+ await project.getByRole('button', { name: 'Show more' }).click();
+ assert.equal(await project.locator('.chat-row').count(), 6);
+ await page.locator('.recent-conversations > summary').click();
+ assert.equal(await page.getByRole('button', { name: 'Unassigned test conversation', exact: true }).isVisible(), true);
+ await page.screenshot({ path: '.impeccable/review/project-sidebar-desktop.png' });
+ await page.setViewportSize({ width: 390, height: 844 });
+ await page.reload();
+ await page.getByRole('heading', { level: 1 }).waitFor();
+ await page.getByRole('button', { name: 'Open sidebar', exact: true }).click();
+ assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+ await page.screenshot({ path: '.impeccable/review/project-sidebar-mobile.png' });
+ console.log('PASS: Codex-only composer, project groups, show more, collapsed Recents, and mobile width.');
+} finally { await browser.close(); }

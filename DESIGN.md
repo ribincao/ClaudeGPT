@@ -329,3 +329,7 @@ Animated activity uses breathing dots (1.4s ease-in-out) or spinning SVGs (1s li
 ### Compact navigation refinement
 
 User feedback reduced main and Settings navigation to 34px minimum rows, 7px vertical padding, and 2px sibling gaps. UI icons now default to 16px; icon-only controls use 14px marks while retaining their button areas. Native page zoom scales the shared interface from 50% to 200% with persisted Command/Ctrl shortcuts.
+
+### Codex project sidebar
+
+Replace date-grouped conversations with project groups and a collapsed Recents section. Project summaries use folder icons; nested chat labels omit repeated message icons. Show five conversations per project before Show more. Preserve compact navigation spacing and original thread IDs. Remove the Chat/Work composer switch; this surface is Codex-only.

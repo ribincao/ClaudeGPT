@@ -14,7 +14,8 @@
     "test": "node --test web/server/*.test.mjs",
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
     "test:browser": "node web/scripts/browser-test.mjs",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "test:sidebar": "node web/scripts/sidebar-test.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

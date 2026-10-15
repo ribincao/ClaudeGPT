@@ -168,7 +168,7 @@ app.post('/api/workspaces/choose', wrap(async (_, res) => {
 
 app.post('/api/chats', wrap(async (req, res) => {
   const cwd = await validateDirectory(req.body.workspace || store.state.settings.workspace);
-  const chat = { id: randomUUID(), title: 'New conversation', createdAt: Date.now(), updatedAt: Date.now(), workspace: cwd, mode: req.body.mode === 'work' ? 'work' : 'chat', items: [], status: 'idle', threadId: null, activeTurnId: null, pinned: false, archived: false };
+  const chat = { id: randomUUID(), title: 'New conversation', createdAt: Date.now(), updatedAt: Date.now(), workspace: cwd, mode: 'work', items: [], status: 'idle', threadId: null, activeTurnId: null, pinned: false, archived: false };
   store.state.chats.unshift(chat); store.save(); notifyState(); res.json(chat);
 }));
 app.patch('/api/chats/:id', wrap(async (req, res) => {
