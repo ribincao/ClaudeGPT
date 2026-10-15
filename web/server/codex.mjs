@@ -36,7 +36,7 @@ export class CodexBridge extends EventEmitter {
         message.error ? pending.reject(new Error(message.error.message)) : pending.resolve(message.result);
       }
     });
-    await this.call('initialize', { clientInfo: { name: 'claudex_local', title: 'ClaudeX', version: '0.1.0' }, capabilities: { experimentalApi: true } });
+    await this.call('initialize', { clientInfo: { name: 'claudex_local', title: 'ClaudeGPT', version: '0.1.0' }, capabilities: { experimentalApi: true } });
     this.send({ method: 'initialized', params: {} }); this.ready = true;
     this.emit('ready');
   }

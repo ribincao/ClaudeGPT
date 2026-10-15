@@ -549,7 +549,7 @@ async fn send_message(backend: Arc<Backend>, id: &str, body: Value) -> Result<Va
             .ok_or("This skill is no longer available.")?;
         input.push(json!({"type":"skill","name":skill["name"],"path":skill["path"]}));
     }
-    let mut config = json!({"model":model_id,"cwd":workspace,"sandbox":if chat["mode"]=="work"{"workspace-write"}else{"read-only"},"approvalPolicy":settings["approvalPolicy"],"approvalsReviewer":"user","developerInstructions":format!("You are the assistant in ClaudeX, a personal local Codex client. Keep explanations clear and concise. Use Markdown when helpful.\n\n{}",string(settings,"customInstructions"))});
+    let mut config = json!({"model":model_id,"cwd":workspace,"sandbox":if chat["mode"]=="work"{"workspace-write"}else{"read-only"},"approvalPolicy":settings["approvalPolicy"],"approvalsReviewer":"user","developerInstructions":format!("You are the assistant in ClaudeGPT, a personal local Codex client. Keep explanations clear and concise. Use Markdown when helpful.\n\n{}",string(settings,"customInstructions"))});
     let thread = if chat["threadId"].is_null() {
         let r = backend.engine.call("thread/start", config.clone()).await?;
         let thread = r["thread"]["id"]

@@ -117,7 +117,7 @@ impl Engine {
             }
             disconnected();
         });
-        self.call("initialize",json!({"clientInfo":{"name":"claudex_desktop","title":"ClaudeX","version":"0.1.0"},"capabilities":{"experimentalApi":true}})).await?;
+        self.call("initialize",json!({"clientInfo":{"name":"claudex_desktop","title":"ClaudeGPT","version":"0.1.0"},"capabilities":{"experimentalApi":true}})).await?;
         self.send(json!({"method":"initialized","params":{}}))
             .await?;
         self.ready.store(true, Ordering::SeqCst);
@@ -198,7 +198,7 @@ mod tests {
             .unwrap()["model"]
             .clone();
         let thread=engine.call("thread/start",json!({"model":model,"cwd":std::env::temp_dir(),"sandbox":"read-only","approvalPolicy":"on-request"})).await.unwrap()["thread"]["id"].clone();
-        engine.call("turn/start",json!({"threadId":thread,"model":model,"effort":"low","input":[{"type":"text","text":"Reply with exactly: ClaudeX Rust transport works. Do not use tools."}]})).await.unwrap();
+        engine.call("turn/start",json!({"threadId":thread,"model":model,"effort":"low","input":[{"type":"text","text":"Reply with exactly: ClaudeGPT Rust transport works. Do not use tools."}]})).await.unwrap();
         let mut text = String::new();
         let completed = timeout(Duration::from_secs(90), async {
             while let Some(message) = receiver.recv().await {
@@ -216,7 +216,7 @@ mod tests {
         })
         .await;
         assert!(completed.is_ok());
-        assert_eq!(text, "ClaudeX Rust transport works.");
+        assert_eq!(text, "ClaudeGPT Rust transport works.");
         engine
             .call(
                 "thread/resume",

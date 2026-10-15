@@ -1,5 +1,5 @@
 {
-  "name": "claudex",
+  "name": "claudegpt",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,7 +15,8 @@
     "test:rust": "cargo test --manifest-path src-tauri/Cargo.toml",
     "test:browser": "node web/scripts/browser-test.mjs",
     "tauri": "tauri",
-    "test:sidebar": "node web/scripts/sidebar-test.mjs"
+    "test:sidebar": "node web/scripts/sidebar-test.mjs",
+    "test:links": "node web/scripts/link-test.mjs"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",
@@ -42,6 +43,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ribincao/ClaudeX.git"
+    "url": "https://github.com/ribincao/ClaudeGPT.git"
   }
 }

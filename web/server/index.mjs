@@ -29,7 +29,7 @@ const validOrigin = origin => origin && [`http://localhost:${port}`, `http://127
 
 app.disable('x-powered-by');
 app.use((req, res, next) => {
-  if (!allowedHosts.has(req.headers.host)) return res.status(403).json({ error: 'ClaudeX accepts local connections only.' });
+  if (!allowedHosts.has(req.headers.host)) return res.status(403).json({ error: 'ClaudeGPT accepts local connections only.' });
   if (req.headers.origin && !validOrigin(req.headers.origin)) return res.status(403).json({ error: 'Cross-origin requests are disabled.' });
   if (req.method !== 'GET' && req.method !== 'HEAD' && req.headers['x-claudex-client'] !== '1') return res.status(403).json({ error: 'Missing local client header.' });
   res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -120,14 +120,14 @@ bridge.on('notification', ({ method, params: p }) => {
 bridge.on('request', request => {
   const supported = ['item/commandExecution/requestApproval', 'item/fileChange/requestApproval', 'item/tool/requestUserInput', 'item/permissions/requestApproval', 'mcpServer/elicitation/request'];
   if (!supported.includes(request.method)) {
-    bridge.send({ id: request.id, error: { code: -32601, message: 'ClaudeX does not support this interactive request yet.' } }); return;
+    bridge.send({ id: request.id, error: { code: -32601, message: 'ClaudeGPT does not support this interactive request yet.' } }); return;
   }
   approvals.set(String(request.id), request); notifyState();
 });
 
 function wrap(handler) { return (req, res, next) => Promise.resolve(handler(req, res)).catch(next); }
 app.get('/api/state', (_, res) => res.json(snapshot()));
-app.get('/api/health', (_, res) => res.json({ ok: true, codex: bridge.ready, app: 'ClaudeX' }));
+app.get('/api/health', (_, res) => res.json({ ok: true, codex: bridge.ready, app: 'ClaudeGPT' }));
 app.post('/api/reconnect', wrap(async (_, res) => res.json(await refreshEngine())));
 app.post('/api/login', wrap(async (_, res) => { await ready(); res.json(await bridge.call('account/login/start', { type: 'chatgpt' })); }));
 app.post('/api/login/cancel', wrap(async (req, res) => { await bridge.call('account/login/cancel', { loginId: req.body.loginId }); res.json({ ok: true }); }));
@@ -159,7 +159,7 @@ app.post('/api/workspaces', wrap(async (req, res) => {
 app.post('/api/workspaces/choose', wrap(async (_, res) => {
   if (process.platform !== 'darwin') throw new Error('The native folder picker is available on Mac. Paste a folder path instead.');
   try {
-    const { stdout } = await promisify(execFile)('osascript', ['-e', 'POSIX path of (choose folder with prompt "Choose a workspace for ClaudeX")'], { timeout: 120000 });
+    const { stdout } = await promisify(execFile)('osascript', ['-e', 'POSIX path of (choose folder with prompt "Choose a workspace for ClaudeGPT")'], { timeout: 120000 });
     const directory = await validateDirectory(stdout.trim());
     if (!store.state.workspaces.includes(directory)) store.state.workspaces.push(directory);
     store.state.settings.workspace = directory; store.save(); notifyState(); res.json({ path: directory });
@@ -212,7 +212,7 @@ app.post('/api/chats/:id/message', wrap(async (req, res) => {
   const efforts = (chosenModel.supportedReasoningEfforts || []).map(e => e.reasoningEffort);
   const effort = efforts.includes(requestedEffort) ? requestedEffort : chosenModel.defaultReasoningEffort;
   const sandbox = chat.mode === 'work' ? 'workspace-write' : 'read-only';
-  const instructions = ['You are the assistant in ClaudeX, a personal local Codex client. Keep explanations clear and concise. Use Markdown when helpful.', settings.customInstructions].filter(Boolean).join('\n\n');
+  const instructions = ['You are the assistant in ClaudeGPT, a personal local Codex client. Keep explanations clear and concise. Use Markdown when helpful.', settings.customInstructions].filter(Boolean).join('\n\n');
   const config = { cwd: chat.workspace, model: chosenModel.model || chosenModel.id, sandbox, approvalPolicy: settings.approvalPolicy, approvalsReviewer: 'user', developerInstructions: instructions };
   if (!chat.threadId) {
     const result = await bridge.call('thread/start', config);
@@ -339,7 +339,7 @@ if (process.argv.includes('--dev')) {
 app.use((error, _, res, next) => { if (res.headersSent) return next(error); res.status(error.status || 400).json({ error: error.message || 'Something went wrong. Please try again.' }); });
 
 server.listen(port, '127.0.0.1', () => {
-  console.log(`ClaudeX is ready at http://localhost:${port}`);
+  console.log(`ClaudeGPT is ready at http://localhost:${port}`);
   refreshEngine().catch(error => { engineError = error.message; notifyState(); });
 });
 function shutdown() { store.save(); bridge.stop(); server.close(); process.exit(0); }

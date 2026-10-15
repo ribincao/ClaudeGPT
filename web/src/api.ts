@@ -9,7 +9,7 @@ export async function api<T = any>(path: string, method = 'GET', body?: unknown)
     catch (error) { throw new Error(String(error)); }
   }
   const response = await fetch(`/api${path}`, {
-    method, headers: { 'Content-Type': 'application/json', 'X-ClaudeX-Client': '1' },
+    method, headers: { 'Content-Type': 'application/json', 'X-ClaudeGPT-Client': '1' },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
   const result = await response.json();

@@ -1,5 +1,5 @@
-<p align="center"><img src="web/public/favicon.svg" width="80" alt="ClaudeX icon"></p>
-<h1 align="center">ClaudeX</h1>
+<p align="center"><img src="web/public/favicon.svg" width="80" alt="ClaudeGPT icon"></p>
+<h1 align="center">ClaudeGPT</h1>
 <p align="center">A little more room to think.</p>
 
 A lightweight, Claude-inspired desktop interface for **Codex**, built with **Tauri 2, Rust, and React**. This is a personal open-source project made for fun. macOS is the primary platform; the source also targets Windows.
@@ -18,13 +18,13 @@ The desktop app talks to a local `codex app-server` from Rust. It uses the syste
 
 ## Download
 
-[GitHub Releases](https://github.com/ribincao/ClaudeX/releases) will hold downloadable Mac and Windows installers. **No public release has been published yet.** The first version is being evaluated locally before build CI and release automation are enabled.
+[GitHub Releases](https://github.com/ribincao/ClaudeGPT/releases) will hold downloadable Mac and Windows installers. **No public release has been published yet.** The first version is being evaluated locally before build CI and release automation are enabled.
 
-When a release is available, download the installer for your platform, launch ClaudeX, and connect your installed Codex. Each release will document signing and platform requirements. This first local build is not a signed public distribution.
+When a release is available, download the installer for your platform, launch ClaudeGPT, and connect your installed Codex. Each release will document signing and platform requirements. This first local build is not a signed public distribution.
 
 ## Requirements
 
-Install a current Codex CLI and sign in with your supported ChatGPT plan or API credentials. ClaudeX reuses Codex's own authentication; credentials never enter the React interface. On macOS it prefers the current Codex engine bundled with an installed ChatGPT desktop app. On Windows it checks PATH and the standard global npm installation. **Settings → Account** lets you choose an executable manually.
+Install a current Codex CLI and sign in with your supported ChatGPT plan or API credentials. ClaudeGPT reuses Codex's own authentication; credentials never enter the React interface. On macOS it prefers the current Codex engine bundled with an installed ChatGPT desktop app. On Windows it checks PATH and the standard global npm installation. **Settings → Account** lets you choose an executable manually.
 
 Codex is an external prerequisite, not vendored by this project. Model availability, inference billing, and limits remain those of your account.
 
@@ -33,8 +33,8 @@ Codex is an external prerequisite, not vendored by this project. Model availabil
 Install [Tauri prerequisites](https://v2.tauri.app/start/prerequisites/), stable Rust, and Node.js 22+. macOS requires Xcode Command Line Tools. Windows requires Microsoft C++ build tools and WebView2.
 
 ```sh
-git clone https://github.com/ribincao/ClaudeX.git
-cd ClaudeX
+git clone https://github.com/ribincao/ClaudeGPT.git
+cd ClaudeGPT
 npm ci
 npm run dev
 ```
@@ -43,7 +43,7 @@ Build a local Mac application for evaluation (the build applies and verifies an 
 
 ```sh
 npm run build
-open src-tauri/target/release/bundle/macos/ClaudeX.app
+open src-tauri/target/release/bundle/macos/ClaudeGPT.app
 ```
 
 Build platform-specific installers on the matching operating system with `npm run build:desktop`. Tauri can produce a Mac app/DMG or Windows NSIS/MSI installers. No CI workflow runs in this first version; see [the release plan](docs/releases.md).
@@ -103,9 +103,9 @@ See [development](docs/development.md) and [architecture](docs/architecture.md).
 
 ## License and identity
 
-[MIT](LICENSE) © 2026 Ribin Cao. ClaudeX is a personal, noncommercial hobby project; MIT permits modification, redistribution, and commercial reuse by others.
+[MIT](LICENSE) © 2026 Ribin Cao. ClaudeGPT is a personal, noncommercial hobby project; MIT permits modification, redistribution, and commercial reuse by others.
 
-ClaudeX is independent and unaffiliated with Anthropic or OpenAI. Claude Desktop inspired the visual style; Codex provides the assistant engine. The orange-and-white icon derives from the OpenAI knot in [Simple Icons v11](https://cdn.jsdelivr.net/npm/simple-icons@11/icons/openai.svg). Third-party marks remain their owners' property. See [notices](THIRD_PARTY_NOTICES.md).
+ClaudeGPT is independent and unaffiliated with Anthropic or OpenAI. Claude Desktop inspired the visual style; Codex provides the assistant engine. The orange-and-white icon derives from the OpenAI knot in [Simple Icons v11](https://cdn.jsdelivr.net/npm/simple-icons@11/icons/openai.svg). Third-party marks remain their owners' property. See [notices](THIRD_PARTY_NOTICES.md).
 
 ### Interface controls
 
@@ -113,10 +113,16 @@ Sidebar and Settings navigation use compact 28px rows and 16px icons. On macOS, 
 
 ### Shared Codex history and sign-in
 
-The desktop app uses the installed Codex app-server and its existing Codex home/configuration. It reads saved local threads through `thread/list`, hydrates legacy and paginated transcripts through `thread/read` and `thread/turns/list`, and resumes the original thread ID. History refreshes on startup, window focus, and every 30 seconds while visible. Rename, archive, restore, and confirmed delete use Codex protocol methods and affect the original Codex thread. Pins and visual preferences remain ClaudeX-specific. Local JSON is a render cache and UI preferences, not a replacement Codex history store.
+The desktop app uses the installed Codex app-server and its existing Codex home/configuration. It reads saved local threads through `thread/list`, hydrates legacy and paginated transcripts through `thread/read` and `thread/turns/list`, and resumes the original thread ID. History refreshes on startup, window focus, and every 30 seconds while visible. Rename, archive, restore, and confirmed delete use Codex protocol methods and affect the original Codex thread. Pins and visual preferences remain ClaudeGPT-specific. Local JSON is a render cache and UI preferences, not a replacement Codex history store.
 
 Settings → Account reuses the existing account or starts Codex's ChatGPT browser sign-in flow. This does not provide regular ChatGPT website conversations, cloud-only tasks, or complete parity with every proprietary desktop integration. Avoid sending turns to the same thread from two clients at once. The developer web preview still has its own conversation index.
 
 ### Codex-only navigation
 
 The composer has no Chat/Work switch. New conversations use the Codex workspace-write workflow with explicit approvals; saved conversations retain their previous permissions. The desktop sidebar reads Codex projects, groups assigned threads under each project, shows five threads per project with Show more, and keeps unassigned threads under collapsed Recents. It uses Codex recency metadata for ordering. Where project assignment migration is incomplete, it reads the local desktop metadata as a compatibility fallback, without changing that file. This fallback is an internal format and may need updating after Codex upgrades.
+
+External links in assistant replies open in the system default browser on desktop; email links use their registered mail app. Codex account data does not include a profile-photo field, so the account control currently uses a letter placeholder rather than synchronizing a ChatGPT avatar.
+
+### Rename compatibility
+
+ClaudeGPT retains its original `io.github.ribincao.claudex` application identifier, application-data folder, browser storage keys, and internal transport identifiers. Keeping these stable preserves existing conversations, preferences, drafts, and attachment links when replacing ClaudeX. Product names, repository URLs, and source checkout paths use ClaudeGPT/claudegpt.

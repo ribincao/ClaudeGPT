@@ -6,4 +6,4 @@ After acceptance, use a manually dispatched/tag-triggered Tauri workflow with ma
 
 Upload binaries to GitHub Release assets or CI artifacts, never Git history. Decide signing/notarization before public distribution. Publish draft releases first, record checksums and platform limits, and add direct download links only after real assets exist.
 
-The first local app is src-tauri/target/release/bundle/macos/ClaudeX.app. It is not a published release.
+The first local app is src-tauri/target/release/bundle/macos/ClaudeGPT.app. It is not a published release.

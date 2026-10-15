@@ -142,7 +142,7 @@ impl Backend {
             } else {
                 let engine = self.engine.clone();
                 tauri::async_runtime::spawn(async move {
-                    let _=engine.send(json!({"id":message["id"],"error":{"code":-32601,"message":"This request is not supported by ClaudeX."}})).await;
+                    let _=engine.send(json!({"id":message["id"],"error":{"code":-32601,"message":"This request is not supported by ClaudeGPT."}})).await;
                 });
             }
             return;
@@ -350,7 +350,7 @@ pub fn run() {
             Ok(())
         })
         .build(tauri::generate_context!())
-        .expect("Failed to start ClaudeX");
+        .expect("Failed to start ClaudeGPT");
     app.run(|app, event| {
         if let tauri::RunEvent::Exit = event {
             let backend = app.state::<Arc<Backend>>();

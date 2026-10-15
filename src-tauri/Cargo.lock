@@ -500,7 +500,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "claudex"
+name = "claudegpt"
 version = "0.1.0"
 dependencies = [
  "base64 0.22.1",

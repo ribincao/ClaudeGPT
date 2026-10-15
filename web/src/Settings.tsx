@@ -10,7 +10,7 @@ const sections = [
   { id: 'workspace', name: 'Workspace', icon: FolderOpen },
   { id: 'codex', name: 'Codex', icon: SlidersHorizontal },
   { id: 'data', name: 'Data & privacy', icon: Shield },
-  { id: 'about', name: 'About ClaudeX', icon: Info },
+  { id: 'about', name: 'About ClaudeGPT', icon: Info },
 ];
 const searchTerms: Record<string, string> = {
   general: 'appearance theme light dark font transcript text size width motion name enter keyboard',
@@ -55,7 +55,7 @@ export function Settings({ state, close, save, toast, initialSection = 'general'
       <div className="settings-search"><Search size={17} /><input aria-label="Search settings" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} /></div>
       <div className="settings-caption">Settings</div>
       <nav aria-label="Settings categories">{availableSections.map(({ id, name, icon: Icon }) => <button key={id} className={activeSection === id ? 'active' : ''} onClick={() => setSection(id)}><Icon size={20} strokeWidth={1.6} /><span>{name}</span></button>)}</nav>
-      <div className="settings-sidebar-footer"><span>ClaudeX <small>0.1.0</small></span></div>
+      <div className="settings-sidebar-footer"><span>ClaudeGPT <small>0.1.0</small></span></div>
     </aside>
     <div className="settings-content">
       {!activeSection && <div className="empty-inline"><Search size={26} /><h2>No matching settings</h2><p>Try searching for “theme”, “model”, or “workspace”.</p></div>}
@@ -76,13 +76,13 @@ export function Settings({ state, close, save, toast, initialSection = 'general'
         <div className="account-summary"><div className="avatar large">{(s.displayName || 'R')[0].toUpperCase()}</div><div><h3>{state.account?.email || (state.account?.type === 'apiKey' ? 'OpenAI API account' : 'Your Codex account')}</h3><p>{state.account ? `${capitalize(state.account.planType || state.account.type)} · Connected through local Codex` : 'Connect your account to start a conversation.'}</p></div></div>
         <Row title="Codex connection" description="Uses the Codex CLI installed on this Mac."><span className={`connection-label ${state.connected ? 'connected' : ''}`}><span className="status-dot" />{state.connected ? 'Connected' : 'Disconnected'}</span></Row>
         <Row title="Refresh connection" description="Reconnect and refresh the available models."><button className="secondary-button" disabled={busy} onClick={() => action(() => api('/reconnect', 'POST'), 'Codex connection refreshed.')}><RefreshCw size={15} className={busy ? 'spinning' : ''} />Reconnect</button></Row>
-        {desktop && <><h2>Codex executable</h2><p className="section-description">ClaudeX finds your installed Codex automatically. You can choose another executable if needed.</p><div className="path-input"><input aria-label="Codex executable path" placeholder="Automatic detection" value={enginePath} onChange={e => setEnginePath(e.target.value)} /></div><div className="button-row"><button className="secondary-button" disabled={busy} onClick={() => action(async () => { const result = await api('/engine/choose', 'POST'); if (result.path) setEnginePath(result.path); })}>Browse</button><button className="secondary-button" disabled={busy} onClick={() => action(async () => { await api('/settings', 'POST', { enginePath }); await api('/engine/restart', 'POST'); }, 'Codex executable updated.')}>Save & reconnect</button></div></>}
+        {desktop && <><h2>Codex executable</h2><p className="section-description">ClaudeGPT finds your installed Codex automatically. You can choose another executable if needed.</p><div className="path-input"><input aria-label="Codex executable path" placeholder="Automatic detection" value={enginePath} onChange={e => setEnginePath(e.target.value)} /></div><div className="button-row"><button className="secondary-button" disabled={busy} onClick={() => action(async () => { const result = await api('/engine/choose', 'POST'); if (result.path) setEnginePath(result.path); })}>Browse</button><button className="secondary-button" disabled={busy} onClick={() => action(async () => { await api('/settings', 'POST', { enginePath }); await api('/engine/restart', 'POST'); }, 'Codex executable updated.')}>Save & reconnect</button></div></>}
         {!state.account && <Row title="Sign in with ChatGPT" description="Use your ChatGPT plan through Codex."><button className="primary-button" disabled={busy} onClick={() => action(async () => { const result = await api('/login', 'POST'); setLogin(result); await openExternal(result.authUrl); })}>Sign in<ArrowUpRight size={15} /></button></Row>}
         {login && <div className="login-message"><p>Finish signing in in your browser, then return here.</p><a href={login.authUrl} target="_blank" rel="noreferrer">Open sign-in page <ExternalLink size={14} /></a><button className="text-button" onClick={() => action(async () => { await api('/login/cancel', 'POST', { loginId: login.loginId }); setLogin(null); })}>Cancel sign-in</button></div>}
         {state.engineError && <p className="inline-error">{state.engineError}</p>}
         <h2>Usage</h2>
         {usage ? <Usage data={usage} /> : <p className="muted">Usage information appears here when Codex makes it available.</p>}
-        <p className="settings-footnote">ClaudeX shares the local Codex sign-in. Your credentials stay with Codex and are never sent to the web interface.</p>
+        <p className="settings-footnote">ClaudeGPT shares the local Codex sign-in. Your credentials stay with Codex and are never sent to the web interface.</p>
       </>}
       {activeSection === 'workspace' && <>
         <h2>Workspace</h2>
@@ -112,16 +112,16 @@ export function Settings({ state, close, save, toast, initialSection = 'general'
       {activeSection === 'data' && <>
         <h2>Data & privacy</h2>
         <p className="section-description">Your conversation history, attachments, and preferences are stored on this Mac. Prompts and task context are sent to OpenAI through Codex when you use the assistant.</p>
-        <Row title="Conversation history" description="Saved locally and available after restarting ClaudeX."><span className="muted">{state.chats.length} conversation{state.chats.length === 1 ? '' : 's'}</span></Row>
+        <Row title="Conversation history" description="Saved locally and available after restarting ClaudeGPT."><span className="muted">{state.chats.length} conversation{state.chats.length === 1 ? '' : 's'}</span></Row>
         <Row title="Export your data" description="Download conversations and preferences as JSON."><button className="secondary-button" onClick={() => action(async () => download("claudex-export.json", JSON.stringify(await api("/export"), null, 2), "application/json"))}><Download size={15} />Export data</button></Row>
-        {desktop ? <Row title="Refresh Codex history" description="Reload saved conversations from the same local Codex store."><button className="secondary-button" disabled={busy} onClick={() => action(() => api('/history/refresh', 'POST'), 'Codex history refreshed.')}><RefreshCw size={15} />Refresh history</button></Row> : <Row title="Clear conversation history" description="Remove ClaudeX’s saved conversations. Codex’s own logs are separate."><button className="secondary-button danger-text" disabled={busy} onClick={() => setConfirmClear(true)}><Trash2 size={15} />Clear history</button></Row>}
-        {confirmClear && <div className="confirm-inline"><p>Delete all {state.chats.length} saved conversations from ClaudeX? This cannot be undone.</p><div className="button-row"><button className="secondary-button" onClick={() => setConfirmClear(false)}>Keep conversations</button><button className="danger-button" disabled={busy} onClick={() => action(async () => { await api('/clear', 'POST'); setConfirmClear(false); }, 'Conversation history cleared.')}>Delete all conversations</button></div></div>}
+        {desktop ? <Row title="Refresh Codex history" description="Reload saved conversations from the same local Codex store."><button className="secondary-button" disabled={busy} onClick={() => action(() => api('/history/refresh', 'POST'), 'Codex history refreshed.')}><RefreshCw size={15} />Refresh history</button></Row> : <Row title="Clear conversation history" description="Remove ClaudeGPT’s saved conversations. Codex’s own logs are separate."><button className="secondary-button danger-text" disabled={busy} onClick={() => setConfirmClear(true)}><Trash2 size={15} />Clear history</button></Row>}
+        {confirmClear && <div className="confirm-inline"><p>Delete all {state.chats.length} saved conversations from ClaudeGPT? This cannot be undone.</p><div className="button-row"><button className="secondary-button" onClick={() => setConfirmClear(false)}>Keep conversations</button><button className="danger-button" disabled={busy} onClick={() => action(async () => { await api('/clear', 'POST'); setConfirmClear(false); }, 'Conversation history cleared.')}>Delete all conversations</button></div></div>}
         <h2>Local connection</h2>
         <Row title="Server address" description="Only accessible from this Mac."><span className="muted">{desktop ? 'Native desktop connection' : window.location.host}</span></Row>
         <Row title="Account credentials" description="Managed by the installed Codex CLI."><span className="muted">Kept out of the browser</span></Row>
       </>}
       {activeSection === 'about' && <>
-        <div className="about-brand"><h2>ClaudeX</h2><p>A little more room to think.</p><small>Version 0.1.0 · {desktop ? 'Desktop app' : 'Web preview'}</small></div>
+        <div className="about-brand"><h2>ClaudeGPT</h2><p>A little more room to think.</p><small>Version 0.1.0 · {desktop ? 'Desktop app' : 'Web preview'}</small></div>
         <h2>Keyboard shortcuts</h2>
         <Row title="New conversation"><kbd>⌘ N</kbd></Row>
         <Row title="Search conversations"><kbd>⌘ K</kbd></Row>

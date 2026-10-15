@@ -8,7 +8,7 @@ const root = path.resolve(import.meta.dirname, '../..');
 const screenshots = path.join(root, '.impeccable/review');
 await fs.mkdir(screenshots, { recursive: true });
 const request = async (endpoint, method = 'GET', body) => {
-  const result = await fetch(`${base}/api${endpoint}`, { method, headers: { 'Content-Type': 'application/json', 'X-ClaudeX-Client': '1' }, body: body === undefined ? undefined : JSON.stringify(body) });
+  const result = await fetch(`${base}/api${endpoint}`, { method, headers: { 'Content-Type': 'application/json', 'X-ClaudeGPT-Client': '1' }, body: body === undefined ? undefined : JSON.stringify(body) });
   const data = await result.json(); if (!result.ok) throw new Error(data.error); return data;
 };
 const original = await request('/reconnect', 'POST');
@@ -25,7 +25,7 @@ async function screenshot(name) {
 try {
   await page.goto(base);
   await page.getByRole('heading', { level: 1 }).waitFor();
-  assert.match(await page.title(), /ClaudeX/);
+  assert.match(await page.title(), /ClaudeGPT/);
   await page.getByRole('button', { name: 'Write', exact: true }).click();
   assert.equal(await page.getByRole('textbox', { name: 'Message Codex' }).inputValue(), 'Help me write ');
   await page.getByRole('textbox', { name: 'Message Codex' }).fill('A saved draft');
@@ -64,20 +64,20 @@ try {
 
   if (process.env.CLAUDEX_LIVE_TEST === '1') {
     await request('/settings', 'POST', { workspace: root, effort: 'low' });
-    const prompt = 'Reply with exactly: ClaudeX is connected. Do not use tools or modify files.';
+    const prompt = 'Reply with exactly: ClaudeGPT is connected. Do not use tools or modify files.';
     await page.getByRole('textbox', { name: 'Message Codex' }).fill(prompt);
     await page.getByRole('button', { name: 'Send message', exact: true }).click();
-    await page.locator('.assistant-message').filter({ hasText: 'ClaudeX is connected.' }).waitFor({ timeout: 90000 });
+    await page.locator('.assistant-message').filter({ hasText: 'ClaudeGPT is connected.' }).waitFor({ timeout: 90000 });
     await page.waitForFunction(() => !document.querySelector('.thinking'), { timeout: 90000 });
     const snapshot = await request('/state');
-    const chat = snapshot.chats.find(c => c.title.startsWith('Reply with exactly: ClaudeX'));
+    const chat = snapshot.chats.find(c => c.title.startsWith('Reply with exactly: ClaudeGPT'));
     chatId = chat.id;
     assert.equal(chat.status, 'completed');
     assert.equal(chat.items.filter(i => i.type === 'userMessage').length, 1, 'No duplicate user messages');
-    assert.equal(chat.items.filter(i => i.type === 'agentMessage').at(-1).text, 'ClaudeX is connected.');
+    assert.equal(chat.items.filter(i => i.type === 'agentMessage').at(-1).text, 'ClaudeGPT is connected.');
     await screenshot('conversation-desktop.png');
     await page.reload();
-    await page.locator('.assistant-message').filter({ hasText: 'ClaudeX is connected.' }).waitFor();
+    await page.locator('.assistant-message').filter({ hasText: 'ClaudeGPT is connected.' }).waitFor();
     await page.getByRole('button', { name: 'Files', exact: true }).click();
     await page.getByRole('button', { name: 'package.json', exact: true }).click();
     await page.locator('.file-preview').filter({ hasText: 'claudex' }).waitFor();
@@ -85,7 +85,7 @@ try {
     assert.match(await page.getByRole('textbox', { name: 'Message Codex' }).inputValue(), /package.json/);
     await page.getByRole('button', { name: 'Close files' }).click();
     await page.getByRole('button', { name: /^Search chats/ }).click();
-    await page.getByRole('textbox', { name: 'Search conversations', exact: true }).fill('ClaudeX is connected');
+    await page.getByRole('textbox', { name: 'Search conversations', exact: true }).fill('ClaudeGPT is connected');
     assert.ok(await page.locator('.search-results > button').count() >= 1);
     await page.getByRole('button', { name: 'Close Search conversations' }).click();
   }

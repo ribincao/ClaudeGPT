@@ -1,12 +1,12 @@
 [package]
-name = "claudex"
+name = "claudegpt"
 version = "0.1.0"
 edition = "2021"
 description = "A calm, personal desktop client for Codex"
 license = "MIT"
-repository = "https://github.com/ribincao/ClaudeX"
+repository = "https://github.com/ribincao/ClaudeGPT"
 [lib]
-name = "claudex_lib"
+name = "claudegpt_lib"
 crate-type = ["staticlib", "cdylib", "rlib"]
 [build-dependencies]
 tauri-build = { version = "2", features = [] }

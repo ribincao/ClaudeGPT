@@ -1,5 +1,5 @@
 ---
-name: ClaudeX
+name: ClaudeGPT
 description: A quiet personal Codex workspace with conversation at its center.
 colors:
   bg: "#191917"
@@ -137,7 +137,7 @@ components:
     padding: "3px"
 ---
 
-# Design System: ClaudeX
+# Design System: ClaudeGPT
 
 ## Overview
 
