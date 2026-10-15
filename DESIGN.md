@@ -337,3 +337,7 @@ Replace date-grouped conversations with project groups and a collapsed Recents s
 ### Reference-matched sidebar density
 
 After direct comparison with Claude, sidebar and Settings navigation use 28px minimum rows, a 20px line height and 4px vertical padding. Main navigation has no sibling gap. Chat rows and project summaries share this rhythm; project group margins are 4px, Recents separation is 12px, and the conversation section begins 24px below navigation. The brand row is 52px with a 21px wordmark and 22px icon. These values supersede the earlier 34px navigation refinement.
+
+### No in-app logo marks
+
+Per user feedback, remove brand image marks from the sidebar, greeting, assistant messages, thinking indicator, launch screen, and Settings. Keep the product name as text and preserve the OS app icon and browser favicon. Assistant text begins at the transcript content edge without an empty avatar gutter. Attachment and generated-content images remain supported. This supersedes earlier in-app knot identity guidance.

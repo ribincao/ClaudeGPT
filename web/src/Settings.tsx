@@ -55,7 +55,7 @@ export function Settings({ state, close, save, toast, initialSection = 'general'
       <div className="settings-search"><Search size={17} /><input aria-label="Search settings" placeholder="Search" value={query} onChange={event => setQuery(event.target.value)} /></div>
       <div className="settings-caption">Settings</div>
       <nav aria-label="Settings categories">{availableSections.map(({ id, name, icon: Icon }) => <button key={id} className={activeSection === id ? 'active' : ''} onClick={() => setSection(id)}><Icon size={20} strokeWidth={1.6} /><span>{name}</span></button>)}</nav>
-      <div className="settings-sidebar-footer"><img src="/favicon.svg" alt="" width="20" height="20" /><span>ClaudeX <small>0.1.0</small></span></div>
+      <div className="settings-sidebar-footer"><span>ClaudeX <small>0.1.0</small></span></div>
     </aside>
     <div className="settings-content">
       {!activeSection && <div className="empty-inline"><Search size={26} /><h2>No matching settings</h2><p>Try searching for “theme”, “model”, or “workspace”.</p></div>}
@@ -121,7 +121,7 @@ export function Settings({ state, close, save, toast, initialSection = 'general'
         <Row title="Account credentials" description="Managed by the installed Codex CLI."><span className="muted">Kept out of the browser</span></Row>
       </>}
       {activeSection === 'about' && <>
-        <div className="about-brand"><img src="/favicon.svg" width="56" height="56" alt="ClaudeX logo" /><h2>ClaudeX</h2><p>A little more room to think.</p><small>Version 0.1.0 · {desktop ? 'Desktop app' : 'Web preview'}</small></div>
+        <div className="about-brand"><h2>ClaudeX</h2><p>A little more room to think.</p><small>Version 0.1.0 · {desktop ? 'Desktop app' : 'Web preview'}</small></div>
         <h2>Keyboard shortcuts</h2>
         <Row title="New conversation"><kbd>⌘ N</kbd></Row>
         <Row title="Search conversations"><kbd>⌘ K</kbd></Row>
