@@ -63,27 +63,27 @@ kbd { font-family: inherit; color: var(--faint); font-size: 12px; white-space: n
 .boot-screen h1 { margin: 0; font: 34px Georgia, serif; }
 .boot-screen p { color: var(--muted); margin: 0 20px; text-align: center; }
 .sidebar { width: 260px; flex-shrink: 0; background: var(--sidebar); border-right: 1px solid var(--fine-border); display: flex; flex-direction: column; padding: 0 12px; z-index: 20; }
-.sidebar-brand { height: 76px; display: flex; align-items: center; justify-content: space-between; padding: 0 9px; }
+.sidebar-brand { height: 52px; min-height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 9px; }
 .sidebar-brand a { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.sidebar-brand a span { font: 25px Georgia, serif; letter-spacing: -.7px; }
-.main-nav { display: flex; flex-direction: column; gap: 2px; }
-.main-nav > button { display: flex; align-items: center; gap: 10px; min-height: 34px; padding: 7px 12px; color: var(--muted); border-radius: 7px; text-align: left; font-size: 14px; }
+.sidebar-brand a span { font: 21px Georgia, serif; letter-spacing: -.7px; }
+.main-nav { display: flex; flex-direction: column; gap: 0; }
+.main-nav > button { display: flex; align-items: center; gap: 10px; min-height: 28px; padding: 4px 12px; line-height: 20px; color: var(--muted); border-radius: 7px; text-align: left; font-size: 14px; }
 .main-nav > button:hover { background: var(--surface); color: var(--text); }
-.main-nav > button.new-chat { background: var(--surface-raised); color: var(--text); margin-bottom: 4px; }
+.main-nav > button.new-chat { background: var(--surface-raised); color: var(--text); margin-bottom: 0; }
 .main-nav > button.new-chat:hover { background: var(--selected); }
 .main-nav kbd { margin-left: auto; opacity: 0; font-size: 11px; }
 .main-nav button:hover kbd { opacity: 1; }
-.conversation-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-top: 32px; }
+.conversation-list { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; padding-top: 24px; }
 .list-heading { display: flex; align-items: center; justify-content: space-between; padding-left: 12px; color: var(--faint); font-size: 12px; }
 .list-heading .icon-button { height: 25px; }
 .sidebar-empty { padding: 15px 12px; color: var(--faint); font-size: 12px; line-height: 1.7; }
 .sidebar-empty p { color: var(--muted); margin: 0 0 3px; }
 .sidebar-empty span { font-size: 11px; }
 .chat-group { color: var(--faint); padding: 19px 12px 7px; font-size: 11px; }
-.chat-row { display: flex; align-items: center; border-radius: 7px; min-height: 37px; position: relative; }
+.chat-row { display: flex; align-items: center; border-radius: 7px; min-height: 28px; position: relative; }
 .chat-row.active { background: var(--surface-raised); }
 .chat-row:hover { background: var(--surface); }
-.chat-select { min-width: 0; display: flex; gap: 9px; align-items: center; text-align: left; flex: 1; padding: 9px 8px 9px 12px; color: var(--muted); font-size: 13px; }
+.chat-select { min-width: 0; display: flex; gap: 9px; align-items: center; text-align: left; flex: 1; padding: 4px 8px 4px 12px; line-height: 20px; color: var(--muted); font-size: 13px; }
 .chat-row.active .chat-select, .chat-row:hover .chat-select { color: var(--text); }
 .chat-select span:not(.running-dot) { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .chat-select > svg { opacity: .65; }
@@ -269,7 +269,7 @@ kbd { font-family: inherit; color: var(--faint); font-size: 12px; white-space: n
 .settings-search:focus-within { border-color: var(--muted); }
 .settings-caption { color: var(--faint); font-size: 12px; margin: 24px 10px 10px; }
 .settings-sidebar nav { display: flex; flex-direction: column; gap: 2px; }
-.settings-sidebar nav button { display: flex; align-items: center; gap: 10px; text-align: left; border-radius: 8px; min-height: 34px; padding: 7px 12px; color: var(--muted); font-size: 15px; }
+.settings-sidebar nav button { display: flex; align-items: center; gap: 10px; text-align: left; border-radius: 8px; min-height: 28px; padding: 4px 12px; line-height: 20px; color: var(--muted); font-size: 15px; }
 .settings-sidebar nav button:hover { background: var(--surface); }
 .settings-sidebar nav button.active { background: var(--selected); color: var(--text); }
 .settings-sidebar-footer { margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 15px 9px 0; font-size: 12px; color: var(--muted); }
@@ -481,15 +481,17 @@ kbd { font-family: inherit; color: var(--faint); font-size: 12px; white-space: n
 .icon-button .lucide { max-width: 14px; max-height: 14px; }
 .main-nav .lucide, .settings-sidebar nav .lucide { width: 16px; height: 16px; }
 
-.project-conversations { margin-top: 12px; }
-.project-conversations > summary, .recent-conversations > summary { display: flex; align-items: center; gap: 10px; padding: 9px 12px; list-style: none; cursor: pointer; color: var(--text); font-size: 14px; border-radius: 7px; }
+.project-conversations { margin-top: 4px; }
+.project-conversations > summary, .recent-conversations > summary { display: flex; align-items: center; gap: 10px; min-height: 28px; line-height: 20px; padding: 4px 12px; list-style: none; cursor: pointer; color: var(--text); font-size: 14px; border-radius: 7px; }
 .project-conversations > summary::-webkit-details-marker, .recent-conversations > summary::-webkit-details-marker { display: none; }
 .project-conversations > summary:hover, .recent-conversations > summary:hover { background: var(--surface); }
 .project-chat-list { padding-left: 12px; }
 .project-chat-list .chat-select > svg { display: none; }
-.project-show-more { padding: 9px 12px; color: var(--faint); font-size: 13px; border-radius: 6px; }
+.project-show-more { padding: 4px 12px; line-height: 20px; color: var(--faint); font-size: 13px; border-radius: 6px; }
 .project-show-more:hover { color: var(--text); background: var(--surface); }
-.recent-conversations { margin-top: 20px; }
+.recent-conversations { margin-top: 12px; }
 .recent-conversations > summary { color: var(--muted); }
 .recent-conversations > summary > span { margin-left: auto; font-size: 11px; }
 .recent-conversations[open] > summary > svg { transform: rotate(180deg); }
+
+.sidebar-brand a > img { width: 22px; height: 22px; }

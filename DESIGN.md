@@ -333,3 +333,7 @@ User feedback reduced main and Settings navigation to 34px minimum rows, 7px ver
 ### Codex project sidebar
 
 Replace date-grouped conversations with project groups and a collapsed Recents section. Project summaries use folder icons; nested chat labels omit repeated message icons. Show five conversations per project before Show more. Preserve compact navigation spacing and original thread IDs. Remove the Chat/Work composer switch; this surface is Codex-only.
+
+### Reference-matched sidebar density
+
+After direct comparison with Claude, sidebar and Settings navigation use 28px minimum rows, a 20px line height and 4px vertical padding. Main navigation has no sibling gap. Chat rows and project summaries share this rhythm; project group margins are 4px, Recents separation is 12px, and the conversation section begins 24px below navigation. The brand row is 52px with a 21px wordmark and 22px icon. These values supersede the earlier 34px navigation refinement.

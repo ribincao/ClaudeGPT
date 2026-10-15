@@ -109,7 +109,7 @@ ClaudeX is independent and unaffiliated with Anthropic or OpenAI. Claude Desktop
 
 ### Interface controls
 
-Sidebar and Settings navigation use compact 34px rows and 16px icons. On macOS, use Command + plus/minus to zoom the whole interface and Command + 0 to reset. On Windows, use Ctrl instead. Desktop zoom ranges from 50% to 200% and persists across restarts. The web preview uses browser zoom.
+Sidebar and Settings navigation use compact 28px rows and 16px icons. On macOS, use Command + plus/minus to zoom the whole interface and Command + 0 to reset. On Windows, use Ctrl instead. Desktop zoom ranges from 50% to 200% and persists across restarts. The web preview uses browser zoom.
 
 ### Shared Codex history and sign-in
 
